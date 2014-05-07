@@ -91,11 +91,11 @@ Click the Repository, go to switch to, New Branch, and create a new branch based
 
 If you would like your new branch to track what is going on up top, you need to configure it to fetch from the remote HEAD.
 
-##When Opening Eclipse##
+###When Opening Eclipse###
 Go to the main branch, and hit Pull.
 
 Merge any changes that have happened mannually by editing the code, and then clicking on the files that were conflicted, and then Add. Once all files have been merged manually, click commit. Do this Often and things won't be crazy when you commit and push later.
 
-##If you would like us to see your work##
+###If you would like us to see your work###
 Push the branch to git by hitting Push. Make sure Pull first, or have a reason not to.
 
