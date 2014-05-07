@@ -23,3 +23,5 @@ controller.
 
 This is not intended to be a repeat of the mini-max assignment, although you may use mini-max up to
 3 plys. For the best grade, make use of other AI methods, such as NNs, CBR, or production systems.
+
+Tony playing with Git.
