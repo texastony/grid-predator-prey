@@ -92,6 +92,8 @@ Click the Repository, go to switch to, New Branch, and create a new branch. As y
 ###When Opening Eclipse###
 Go to the main branch, and hit Pull.
 
+Texas is awesome
+
 Merge any changes that have happened mannually by editing the code, and then clicking on the files that were conflicted, and then Add. Once all files have been merged manually, click commit. Do this Often and things won't be crazy when you commit and push later.
 
 ###If you would like us to see your work###
