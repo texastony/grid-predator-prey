@@ -87,14 +87,10 @@ Clone Project to your Eclipse Platform via going to the Git perspective, Clone a
 
 In that view, Click the Repository, and select import project, import as general project.
 
-Click the Repository, go to switch to, New Branch, and create a new branch based on Master.
-
-If you would like your new branch to track what is going on up top, you need to configure it to fetch from the remote HEAD.
+Click the Repository, go to switch to, New Branch, and create a new branch. As your source, select Remote Tracking: GitHub/master. Now, if anyone updates that branch, you can pull those updates.
 
 ###When Opening Eclipse###
 Go to the main branch, and hit Pull.
-
-Texas is awesome
 
 Merge any changes that have happened mannually by editing the code, and then clicking on the files that were conflicted, and then Add. Once all files have been merged manually, click commit. Do this Often and things won't be crazy when you commit and push later.
 
