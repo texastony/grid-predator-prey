@@ -1,33 +1,26 @@
-genetic-scheming
-================
+#Predator/Prey in the Grid#
 
-AI #15 is due on Tuesday, 6 May. Write a genetic algorithm (GA) that learns all ones for a 32 bit 
-chromosome. Make your program able to work for any size input string. It should be able to randomly 
-generate the initial population. Do the standard selection, crossover, and mutation as discussed 
-in class. At each x generations display the best individual along with its fitness and the average 
-fitness of the population.
+###Project Summary###
+Create a predator and a prey for the predator/prey competition on 05/08/14.
 
-================
-##Selection##
-Tony: I assume standard selection is two stochastically picked parents. The probability of a parent 
-getting selected is its fitness divided by the sum of all the fitnesses. 
+###Project Guidelines###
+You can only modify grid-get-next-robot.ss and grid-get-next-goal.ss. Rename them both with your
+name in front of grid.
 
-Parker: if you have a population of 100 individuals this should happen 50 to 100 times each 
-generation.  50 times if each crossover produces 2 children and 100 times if each crossover 
-produces 1 child.  If 1 child, randomized which parent is first.
+You have two new functions at your disposal (build and blast). You may modify them both with the
+following restrictions:
 
-##Crossover##
+- build can build an obstacle at any adjacent node, but only one during a turn, and the agent
+cannot move during that turn
+- blast can blast away any and all adjacent obstacles (change the obstacle nodes into a free nodes)
+and the agent cannot move during that turn.
 
-Tony: I assume crossover is randomly determined for each child in a generation. We can either due 
-one point or two point random crossover. After the points are randomly selected, we randomly pick 
-which parent each region is from. We can have as many children as we like. 
+Any functions within your code, except get-next-robot and get-next-goal, must begin r if in the
+robot file and g if in the goal file.
 
-Parker:  one point crossover
+Other than build and blast, your program cannot alter the grid or your opponent. Your programs will
+be graded on the speed (no excessive delays in movement), uniqueness, and effectiveness of your
+controller.
 
-##Mutation##
-
-Tony: After the chromosome is generated, each gene is then checked for mutation. Every gene has a 1 
-in BIG_NUMBER or so chance of mutating. Does that sound right?
-
-Parker: use 1/300 chance for each bit in the chromosome.  This allows for the possibility of 0, 1, 
-or more bits mutated in a single chromosome.
+This is not intended to be a repeat of the mini-max assignment, although you may use mini-max up to
+3 plys. For the best grade, make use of other AI methods, such as NNs, CBR, or production systems.
