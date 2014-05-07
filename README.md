@@ -9,7 +9,6 @@ name in front of grid.
 
 You have two new functions at your disposal (build and blast). You may modify them both with the
 following restrictions:
-
 - build can build an obstacle at any adjacent node, but only one during a turn, and the agent
 cannot move during that turn
 - blast can blast away any and all adjacent obstacles (change the obstacle nodes into a free nodes)
