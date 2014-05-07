@@ -79,3 +79,21 @@ Right now, we have no sensors that detect obstacles unless they are adjacent. Wh
 
 ###Division of Labor###
 To me (Tony), it would make sense if we divided the labor amoung the following lines. One person works on the Neural Network, another on the Sensors and Outputs, another works on GA, and another on the Fitness function.
+
+##Git Process##
+
+###To Start New Project###
+Clone Project to your Eclipse Platform via going to the Git perspective, Clone a Repository
+
+In that view, Click the Repository, and select import project, import as general project.
+
+Click the Repository, go to switch to, New Branch, and create a new branch based on Master.
+
+##When Opening Eclipse##
+Go to the main branch, and hit Pull.
+
+Merge any changes that have happened mannually by editing the code, and then clicking on the files that were conflicted, and then Add. Once all files have been merged manually, click commit. Do this Often and things won't be crazy when you commit and push later.
+
+##If you would like us to see your work##
+Push the branch to git by hitting Push. Make sure Pull first, or have a reason not to.
+
