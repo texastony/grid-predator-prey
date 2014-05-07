@@ -89,6 +89,8 @@ In that view, Click the Repository, and select import project, import as general
 
 Click the Repository, go to switch to, New Branch, and create a new branch based on Master.
 
+If you would like your new branch to track what is going on up top, you need to configure it to fetch from the remote HEAD.
+
 ##When Opening Eclipse##
 Go to the main branch, and hit Pull.
 
