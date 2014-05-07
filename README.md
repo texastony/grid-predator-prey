@@ -46,16 +46,23 @@ Generate another 10 random chromsomes, this is the Grail Population.
 	End For
 	Breed
 
-####GA and NN Questions####
+####GA and NN Questions For Parker and Ansers####
 Should we ease the agents into the training scheme?
+	PARKER: Yes
 
 How often should we switch the random seed?
+	PARKER (hinted at, not explicit): Wait until you know it is learning. Then randomize it every so often, or once the fitness gets to a certain level.
 
 How many layers should we do?
+	PARKER: Both, train 2 different set ups
 
 How many neurons inbetween layers?
+	PARKER: At least 5, but less than the number of inputs or outputs, which ever is less.
 
 How many bits should the weights be?
+	PARKER: Around 6. The GA will not train chromosomes that are too big, so this is a limit on how many neurons we can have, and the primary reason we are doing multiple neural networks.
+	
+After a long discussion, it was advised that we create 4 neural networks: a neural network that predicts the behavior (M, B, D, or do-nothing), and a neural network for each of the decsions (B, D, M). The networks can first be trained individually, and then together in parallel. 
 
 ####Outputs####
 MN ME MS MW BN BE BS BE DN DE DS DW
