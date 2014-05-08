@@ -24,27 +24,12 @@ controller.
 This is not intended to be a repeat of the mini-max assignment, although you may use mini-max up to
 3 plys. For the best grade, make use of other AI methods, such as NNs, CBR, or production systems.
 
+##Thursday, 5:00 AM Update##
+Tony is going to crash. Katie, Tony, Teagan, and Peter met in the Robotics lab at 6:00PM. Katie left at midnight. Teagan left at 4:30AM. Tony is leaving at 5:10AM. We are so increadbly close...
+
+"This is an impressive attempt at doing something somewhat intelligent." -- Famous last words.
+
 ###Evolution Plan###
-####Initilization####
-Generate 10 random chromosomes, this the Knight Population.
-
-Generate another 10 random chromsomes, this is the Grail Population.
-
-####Loop####
-	For every Grail
-		Let Fitness be 0
-	End For
-	Generate a random seed
-	For every Knight
-		Let Knight's Fitness be 0
-		For every Grail
-			With Seed, create a Grid
-			Run Knight and Grail on Grid
-			Set Knight's fitness to be pastFitness + thisFitness
-			Set Grail's fitness to be pastFitness + thisFitness
-		End For
-	End For
-	Breed
 
 ####GA and NN Questions For Parker and Ansers####
 Should we ease the agents into the training scheme?
@@ -74,15 +59,10 @@ The first letter stands for an action: M = Move, B = Build, D = Destroy
 The above constraint may be the first real thing we "teach" our network. It could be as simple as setting the fitness of any Chromosome that breaks this constraint to 0. 0 D High is the choice to not do anything.
 
 ####Inputs or Sensors####
-The 4 states of the adjacent blocks (Binary).
+The 4 states of the adjacent blocks. (Free: 0, Blocked: 10000, Off the map: 20000)
 
-The 4 distances to the Grail/Knight (Discrete, b/w 0 and 30).
+The Agent's X and Y coordinate, and the Openet's X and Y (Discrete between 0 and 29).
 
-The 4 distances to the walls (Discrete, b/w 0 and 30).
-
-Adam and Justin say that we have limitless access to probe the grid. Ultimately, I think obstacles are no longer nearly as important as an agent's X Y location. Obstacles can change, walls cannot. It is in the Grail's best interest to find it's way to the center, and try to stay there. It is in the Knight's best interest to drive the Grail away from the center. This can be done by placing its self between the center and grail, as long as the Grail is not already there. I mention all of this because it allows us to think of what other sensors we may need. However, as it is, the distances from the walls provides an excellent measure of centerness. 
-
-Right now, we have no sensors that detect obstacles unless they are adjacent. What if we had sensors that indicated how far we were from the nearest obstacle? Sensors that return the distance between an agent and the cloest obstacle in each cardinal direction. Technically speaking, we could even add a binary input for each block in the grid. Runtime wise, that may be more effective than figuring out the 4 cardinal directions. It would be 90 block-status-calls, each hard coded. Where as the other method's worst case scenario is 60 block-status-calls, and each would have to be dynamically generated (as in the calls have to be realtive to the Knight's realitive position), which would add run time. I have never made a network that learned on so many parameters, but I have read about many that do just that. We would then have 90 binary inputs, and 8 discrete inputs. We would have to have a huge hidden layer, but it may be a fun idea.
 
 ###Division of Labor###
 To me (Tony), it would make sense if we divided the labor amoung the following lines. One person works on the Neural Network, another on the Sensors and Outputs, another works on GA, and another on the Fitness function.

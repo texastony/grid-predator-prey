@@ -1,11 +1,19 @@
-(define num-col-row 30)
+(define num-col-row 10)
 (define size (floor (/ 700 num-col-row)))
-(define obstacle-density 20)
+(define obstacle-density 10)
 (define pause-num 0)
 (define step-count 0)
 (define gui #f)
+(define print #f)
+(if print
+    (begin
+      (display "nn-chromo-m: ") (display nn-chromo-m) (newline)
+      (display "nn-chromo-d: ") (display nn-chromo-d) (newline)
+      (display "nn-chromo-b: ") (display nn-chromo-b) (newline)
+      (display "nn-chromo-n: ") (display nn-chromo-n) (newline)
+      ))
 (if gui
-    (set! pause-num 1000000))
+    (set! pause-num 5000))
 (if gui
     (begin
       (load "grid-class.ss")

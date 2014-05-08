@@ -1,6 +1,8 @@
 ;;(cd "/Users/tonyknapp/git/grid-predator-prey/src")
 
-(define nn-destroy-threshold (- 3000000))
+;;(define nn-destroy-threshold (- 3000000))
+
+(define nn-destroy-threshold .5)
 (define nn-chromo-m '( '[ '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ]))
 (define nn-chromo-d '( '[ '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ]))
 (define nn-chromo-b '( '[ '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ]))
@@ -76,6 +78,7 @@
 (define (nn-decide lst) ;;Called by agent. Returns an instruction list.
   (let* ((action-lst (nn-helper lst nn-chromo-n))
          (action (nn-max-index action-lst)))
+    ;(display action) (newline)
     (cond
      ((= action 1)
       (nn-move (nn-helper lst nn-chromo-m)))
@@ -118,13 +121,13 @@
       (if (> (car gvn-lst) nn-destroy-threshold)
           (cond
            ((= ind 0)
-            (nn-destroy-threshold-helper (append rtn-lst '('dn)) (cdr gvn-lst) (+ 1 ind)))
-           ((= ind 1)
-            (nn-destroy-threshold-helper (append rtn-lst '('de)) (cdr gvn-lst) (+ 1 ind)))
-           ((= ind 2)
-            (nn-destroy-threshold-helper (append rtn-lst '('ds)) (cdr gvn-lst) (+ 1 ind)))
-           ((= ind 3)
-            (nn-destroy-threshold-helper (append rtn-lst '('dw)) (cdr gvn-lst) (+ 1 ind))))
+            (nn-destroy-threshold-helper (append rtn-lst (list 'dn)) (cdr gvn-lst) (+ 1 ind)))
+           ((= ind 1)                      
+            (nn-destroy-threshold-helper (append rtn-lst (list 'de)) (cdr gvn-lst) (+ 1 ind)))
+           ((= ind 2)                      
+            (nn-destroy-threshold-helper (append rtn-lst (list 'ds)) (cdr gvn-lst) (+ 1 ind)))
+           ((= ind 3)                     
+            (nn-destroy-threshold-helper (append rtn-lst (list 'dw)) (cdr gvn-lst) (+ 1 ind))))
           (cond
            ((= ind 0)
             (nn-destroy-threshold-helper rtn-lst (cdr gvn-lst) (+ 1 ind)))

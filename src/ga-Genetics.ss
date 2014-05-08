@@ -13,9 +13,8 @@
 (define (ga-run populationsize)
   (set! ga-population-size populationsize)
   (ga-first-gen 99 ga-population-size)
-  ;(ga-update-generation  ga-population)
-  ;(ga-evolve #t))
-  )
+  (ga-update-generation  ga-population)
+  (ga-evolve #t))
 
 ;; Creates the first generation of chromosome strings
 (define (ga-first-gen chrom-len i)
@@ -84,9 +83,13 @@
 ;; Calculates fitness of a chromosome
 (define (ga-calculate-fitness child fitness)
   (load "grid-main.ss")
-  (set! gui #f)
-  (search grid 500))
-  ;(random 500))
+  ;(set! gui #f)
+  (nn-set-chromo-b! (car child))
+  (nn-set-chromo-d! (cadr child))
+  (nn-set-chromo-n! (caddr child))
+  (nn-set-chromo-m! (cadddr child))
+  (- 501 (search grid 500)))
+;  (random 500))
 
 ;; Breeds a new generation from the current ga-population
 (define (ga-update-generation  lst)
