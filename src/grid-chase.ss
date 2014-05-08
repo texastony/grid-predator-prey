@@ -29,15 +29,16 @@
 
 (define search2
   (lambda (grid count stop-count)
-    (display count)
-    (newline)
     (cond 
       ((equal? robot goal)
         (display "Robot attains the goal")
+       (if gui
         (draw-robot))
+       count)
       ((>= count stop-count)
         (display "Took too long")
-        (newline))
+        (newline)
+        count)
       (else
         (pause pause-num)
         (search-robot grid)
@@ -51,14 +52,17 @@
 (define search-robot
   (lambda (grid)
     (let ((next-robot (get-next-robot robot)))
-      (send canvas make-now-free (robot-x) (robot-y))
+      (if gui
+          (send canvas make-now-free (robot-x) (robot-y)))
       (set! robot next-robot)
-      (if (not (null? robot))
+      (if (and gui (not (null? robot)))
         (draw-robot)))))
 
 (define search-goal
   (lambda (grid)
     (let ((next-goal (get-next-goal0 goal)))
-      (send canvas make-now-free (car goal) (cadr goal))
+      (if gui
+          (send canvas make-now-free (car goal) (cadr goal)))
       (set! goal next-goal)
-      (draw-goal))))
+      (if gui
+          (draw-goal)))))

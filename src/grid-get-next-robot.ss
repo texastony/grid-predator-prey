@@ -1,58 +1,107 @@
-(define get-next-robot 
-  (lambda (point)
-    (let* ((lst1 (cons point (adjacento point))) 
-           (lst0 (randomize lst1))
-           (flst (rcalculate-h lst0))
-           (lst (map list flst lst0))) 
-      (set! queue '())
-      (enqueue lst)
-      (let* ((num (random 10))
-             (len (length lst0))
-             (randpt (list-ref lst0 (random len)))
-             (best (front)))
-         (cond 
-           ((= num 0)
-               randpt)
-           ((< num 4)
-               (rblast (adjacent point))
-               point)
-           ((< num 5)
-               (rbuild (adjacent point))
-               point)
-           (else
-              best))))))
+(define (get-next-robot point)
+  (let* ((lst1 (cons point (adjacento point)))
+         (lst0 (randomize lst1))
+         (flst (r-calculate-h lst0))
+         (lst (map list flst lst0)))
+    (set! queue '())
+    (enqueue lst)
+    (let* ((num (random 10))
+           (len (length lst0))
+           (randpt (list-ref lst0 (random len)))
+           (best (front)))
+      (cond
+       ((= num 0)
+        randpt)
+       ((< num 4)
+        (r-blast (adjacent point))
+        point)
+       ((< num 5)
+        (r-build (adjacent point))
+        point)
+       (else
+        best)))))
 
-(define rblast
+(define (r-send-attr-packet point)
+  (let* ((xR (car robot))
+         (yR (cadr robot)))
+    (set! packet '[(get-node grid xR yR-1)
+                   (get-node grid xR+1 yR)
+                   (get-node grid xR yR+1)
+                   (get-node grid xR-1 yR)
+                   (xR)
+                   (yR)
+                   (car goal)
+                   (cadr goal)])
+    (display "Robot sends packet: ") (display packet) (newline)
+    (nn-decide packet)))
+
+(define (r-act lst)
+  (if (not (null? lst))
+      (let ((x (car lst)))
+        (cond
+         ((eqv? x 'mn)
+          (#|move(north)|#))
+         ((eqv? x 'me)
+          (#|move(east)|#))
+         ((eqv? x 'ms)
+          (#|move(east)|#))
+         ((eqv? x 'mw)
+          (#|move(east)|#))
+         ((eqv? x 'dn)
+          (#|move(east)|#))
+         ((eqv? x 'de)
+          (#|move(east)|#))
+         ((eqv? x 'ds)
+          (#|move(east)|#))
+         ((eqv? x 'dw)
+          (#|move(east)|#))
+         ((eqv? x 'bn)
+          (#|move(east)|#))
+         ((eqv? x 'be)
+          (#|move(east)|#))
+         ((eqv? x 'bs)
+          (#|move(east)|#))
+         ((eqv? x 'bw)
+          (#|move(east)|#))
+         ((eqv? x 's)
+          (#|move(east)|#))))
+      ()))
+
+(define r-blast
   (lambda (lst)
     (if (not (null? lst))
-      (let* ((pt (car lst))
-             (x (car pt))
-             (y (cadr pt)))
-        (cond ((= (get-node grid x y) obstacle)
-          (set-node! grid x y free)
-          (send canvas make-now-free x y)))
-        (rblast (cdr lst))))))
+        (let* ((pt (car lst))
+               (x (car pt))
+               (y (cadr pt)))
+          (cond ((= (get-node grid x y) obstacle)
+                 (set-node! grid x y free)
+                 (if gui
+                     (send canvas make-now-free x y))))
 
-(define rbuild
+          (r-blast (cdr lst))))))
+
+(define r-build
   (lambda (lst)
     (if (not (null? lst))
-      (let* ((blst (randomize lst))
-             (pt (car blst))
-             (x (car pt))
-             (y (cadr pt)))
-        (cond 
-          ((= (get-node grid x y) free)
+        (let* ((blst (randomize lst))
+               (pt (car blst))
+               (x (car pt))
+               (y (cadr pt)))
+          (cond
+           ((= (get-node grid x y) free)
             (set-node! grid x y obstacle)
-            (send canvas make-obstacle x y))
-          (else
-            (rbuild (cdr blst))))))))     
+            (if gui
+                
+                (send canvas make-obstacle x y)))
             
-(define rcalculate-h
-  (lambda (lst)
-    (map rh lst)))
+           (else
+            (r-build (cdr blst))))))))
 
-(define rh
+(define r-calculate-h
+  (lambda (lst)
+    (map r-h lst)))
+
+(define r-h
   (lambda (point)
     (+ (abs (- (car point) (car goal)))
        (abs (- (cadr point) (cadr goal))))))
-

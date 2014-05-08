@@ -1,16 +1,22 @@
-
 (define num-col-row 30)
-(define pause-num 1000000)
 (define size (floor (/ 700 num-col-row)))
 (define obstacle-density 20)
+(define pause-num 0)
 (define step-count 0)
-(load "grid-class.ss")
-(load "grid-draw.ss")
+(define gui #f)
+(if gui
+    (set! pause-num 1000000))
+(if gui
+    (begin
+      (load "grid-class.ss")
+      (load "grid-draw.ss")))
 (load "grid-make.ss")
 (load "grid-priority-queue.ss")
 
-(define grid0 (make-grid num-col-row)) 
-(draw-obstacles grid0)
+(define grid0 (make-grid num-col-row))
+(if gui
+    (begin
+      (draw-obstacles grid0)))
 (define grid (convert-grid grid0))
 (load "grid-new.ss")
 (load "grid-get-next-goal.ss")
@@ -20,8 +26,10 @@
 (set-goal grid)
 (set-start grid)
 (set-node! grid (car goal) (cadr goal) free)
-;(draw-start)
-(draw-goal)
-(draw-robot)
-(show canvas)
-(search grid 10000)
+
+(if gui
+    (begin
+      (draw-start)
+      (draw-goal)
+      (draw-robot)
+      (show canvas)))
