@@ -24,6 +24,19 @@ controller.
 This is not intended to be a repeat of the mini-max assignment, although you may use mini-max up to
 3 plys. For the best grade, make use of other AI methods, such as NNs, CBR, or production systems.
 
+##Thursday, 2:00PM Analysis##
+TexasTony believes that the GA is failing to evolve in the right direction for the following reasons. 
+
+1. The population size is too small.
+2. We did not train nn-b, nn-d, and nn-m before traing the entire DNA. PARKER: Not an issue.
+3. The Fitness is based on one run instead of an average. PARKER: As long as they all start on the same spot.
+4. To my knowledge, we never proved that the GA breed properly.
+5. We may have the wrong inputs. We may have wished to have kept the old input system instead of the current one, as it was more explicit. In the words of Parker, the more we can do pre-processing wise for the GA, the better. PARKER: So we do need to change our inputs. We should drop the X and Y coordinate of the agent, and we should use the REALTIVE X and Y coordinates of the opponent, possibly the distance to the walls as well.
+
+PARKER: Figure out how to write to files every so often. Also, MAKE SURE THAT WE ARE RUNNING A GENERATION ON THE SAME GRID.
+
+I should clarify. All of the above were meant to happen before we set this thing on full scale training. TexasTony failed to communicate that to his collaborators, because he focused to much on other problems.
+
 ##Thursday, 5:00 AM Update##
 TexasTony is going to crash. KatieBurke11, TexasTony, Tatwater, and Ren1us met in the Robotics lab at 6:00PM. KatieBurke11 left at midnight. Tatwater left at 4:30AM. TexasTony is leaving at 5:10AM. Ren1us is still working. We are so increadbly close...
 
@@ -50,11 +63,11 @@ How many bits should the weights be?
 After a long discussion, it was advised that we create 4 neural networks: a neural network that predicts the behavior (M, B, D, or do-nothing), and a neural network for each of the decsions (B, D, M). The networks can first be trained individually, and then together in parallel. 
 
 ####Outputs####
-MN ME MS MW BN BE BS BE DN DE DS DW
+MN ME MS MW BN BE BS BE DN DE DS DW S
 
-The first letter stands for an action: M = Move, B = Build, D = Destroy
+The first letter stands for an action: M = Move, B = Build, D = Destroy, S = stay
 
-1 M can be High OR 1 B can be High OR 0 to 4 D can be High
+1 M can be High OR 1 B can be High OR 1 to 4 D can be High OR S can be High
 
 The above constraint may be the first real thing we "teach" our network. It could be as simple as setting the fitness of any Chromosome that breaks this constraint to 0. 0 D High is the choice to not do anything.
 
