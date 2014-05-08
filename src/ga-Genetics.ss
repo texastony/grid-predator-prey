@@ -1,146 +1,156 @@
-(define CHROMOLENGTH 99)
-;(define TARGETFITNESS 32)
-(define MUTATECHANCE 300)
-(define population '())
+(define GA-CHROMOLENGTH 32)
+(define GA-TARGETFITNESS 32)
+(define GA-MUTATECHANCE 300)
+(define ga-population '())
 
-(define genPop!
+(define ga-genPop!
   (lambda (count)
-    (set! population (genPop2 count))))
+    (set! ga-population (ga-genPop2 count))))
 
-(define genPop2
+(define ga-genPop2
   (lambda (count)
     (if (> count 0)
-        (append (list (makeRandomChromo)) (genPop2 (- count 1)))
+        (append (list (ga-makeRandomChromo)) (ga-genPop2 (- count 1)))
         '())))
 
-(define makeRandomChromo
+(define ga-makeRandomChromo
   (lambda ()
-    (makeRandomChromo2 CHROMOLENGTH)))
+    (let ((chromo (ga-makeRandomChromo2 GA-CHROMOLENGTH)))
+      (list (ga-getFitness chromo) chromo))))
 
-(define makeRandomChromo2
+(define ga-makeRandomChromo2
   (lambda (rem)
     (if (> rem 0)
-        (append (makeRandomChromo2 (- rem 1)) (list (random 2)))
+        (append (ga-makeRandomChromo2 (- rem 1)) (list (random 2)))
         '())))
 
-(define getFitness 
+(define ga-getFitness
+  (lambda (chromo)
+    ;(display chromo) (newline)
+    (ga-getFitness2 chromo)))
+
+(define ga-getFitness2 
   (lambda (chromo)
     (if (null? chromo)
         0
-        (+ (car chromo) (getFitness (cdr chromo))))))
+        (+ (car chromo) (ga-getFitness (cdr chromo))))))
 
-(define expandPop
-  (lambda (pop)
+(define ga-expandPop
+  (lambda (total vect pop index)
     (if (null? pop)
-        '()
-        (append 
-          (expandPop2 (car pop) (getFitness (car pop))) 
-          (expandPop (cdr pop))))))
+        (list total vect)
+        (begin
+          (vector-set! vect index (list (+ total (caar pop)) (cadar pop)))
+          (ga-expandPop (+ total (caar pop)) vect (cdr pop) (+ 1 index))))))
 
-(define expandPop2 
-  (lambda (chromo count)
-    (if (> count 0)
-        (append (list chromo) (expandPop2 chromo (- count 1)))
-        '())))
+(define ga-getParent
+  (lambda (target vect index)
+    (if (or (<= (vector-length vect) (+ index 1)) (> (car (vector-ref vect (+ index 1))) target))
+        (list-ref ga-population index)
+        (ga-getParent target vect (+ index 1)))))
 
-(define getParents
+(define ga-getParents
   (lambda ()
-    (let* ((
-    ))
+    (let* ((expanded (ga-expandPop 0 (make-vector (length ga-population)) ga-population 0))
+           (total (car expanded))
+           (vect (cadr expanded)))
+      (list (ga-getParent (random total) vect 0) (ga-getParent (random total) vect 0)))))
 
-(define split
+(define ga-split
   (lambda (p div)
     (list 
-      (sub p div < 0)
-      (sub p div >= 0))))
+      (ga-sub p div < 0)
+      (ga-sub p div >= 0))))
 
-(define sub
+(define ga-sub
   (lambda (p div op pos)
     (if (null? p)
         '()
         (if (op pos div)
-            (append (list (car p)) (sub (cdr p) div op (+ pos 1)))
-            (sub (cdr p) div op (+ pos 1))))))
+            (append (list (car p)) (ga-sub (cdr p) div op (+ pos 1)))
+            (ga-sub (cdr p) div op (+ pos 1))))))
 
-(define cross
+(define ga-cross
   (lambda (p1 p2)
-    (let* ((divide (random CHROMOLENGTH))
-           (p1Split (split p1 divide))
-           (p2Split (split p2 divide)))
+    ;(display "CROSS") (newline)
+    (let* ((divide (random GA-CHROMOLENGTH))
+           (p1Split (ga-split p1 divide))
+           (p2Split (ga-split p2 divide)))
       (list 
         (append (car p1Split) (cadr p2Split))
         (append (cadr p1Split) (car p2Split))))))
 
-(define mutate
+(define ga-mutate
   (lambda (base)
+    ;(display "MUTATE") (newline)
     (if (null? base)
         '()
-        (append (list (mutate2 (car base))) (mutate (cdr base))))))
+        (append (list (list 0 (ga-mutate2 (car (cdr (car base)))))) (ga-mutate (cdr base))))))
 
-(define mutate2
+(define ga-mutate2
   (lambda (child)
+;    (display "CHILD: ") (display child) (newline) (newline)
     (if (null? child)
         '()
-        (if (= 0 (random MUTATECHANCE))
-            (append (list (+ 1 (* -1 (car child)))) (mutate2 (cdr child)))
-            (append (list (car child)) (mutate2 (cdr child)))))))
+        (if (= 0 (random GA-MUTATECHANCE))
+            (append (list (+ 1 (* -1 (car child)))) (ga-mutate2 (cdr child)))
+            (append (list (car child)) (ga-mutate2 (cdr child)))))))
 
-(define breed
+(define ga-breed
   (lambda ()
-    (let* ((parents (getParents))
+    (let* ((parents (ga-getParents))
            (parent1 (car parents))
            (parent2 (cadr parents))
-           (offspring (cross parent1 parent2))
-           (mutants (mutate offspring)))
+           (offspring (ga-cross parent1 parent2))
+           (mutants (ga-mutate offspring)))
+      ;(display mutants) (newline) (newline)
       mutants)))
 
-(define generation
+(define ga-generation
+  (lambda (count)
+    (ga-updateFitnesses (ga-generation2 count))))
+
+(define ga-updateFitnesses
+  (lambda (lst)
+    (display lst)
+    (if (null? lst)
+        '()
+        (append (list (list (ga-getFitness (cadar lst)) (cadar lst))) (ga-updateFitnesses (cdr lst))))))
+
+(define ga-generation2
   (lambda (count)
     (if (= count 0)
         '()
-        (append (breed) (generation (- count 2))))))
+        (append (ga-breed) (ga-generation2 (- count 2))))))
 
-(define bestFitness
+(define ga-bestFitness
   (lambda ()
-    (bestFitness2 
-      (list 
-        (getFitness (car population))
-        (car population))
-      (cdr population))))
+    (ga-bestFitness2 
+      (car ga-population)
+      (cdr ga-population))))
 
-(define bestFitness2
+(trace-define ga-bestFitness2
   (lambda (best pop)
     (if (null? pop)
         best
-        (bestFitness2 
-          (if (< (car best) (getFitness (car pop)))
-              (list (getFitness (car pop)) (car pop))
+        (ga-bestFitness2 
+          (if (< (car best) (caar pop))
+              (car pop)
               best)
           (cdr pop)))))
 
-(define averageFitness
-  (lambda ()
-    (/ (sumFitness population) (length population))))
-
-(define sumFitness
-  (lambda (lst)
-    (if (null? lst)
-        0
-        (+ (getFitness (car lst)) (sumFitness (cdr lst))))))
-
-(define evolve
+(define ga-evolve
   (lambda (startingPop)
-    (genPop! startingPop)
-    (evolve2 0)))
+    (ga-genPop! startingPop)
+    (ga-evolve2 0)))
 
-(define evolve2
+(define ga-evolve2
   (lambda (x)
 ;    (if (not (= TARGETFITNESS (car (bestFitness))))
         (begin
-          (set! population (generation (length population)))
-          (display "Best fitness: ") (display (bestFitness)) (newline)
-          (display "Average fitness: ") (display (averageFitness)) (newline)
-          (evolve2 (+ x 1)))
+          (set! ga-population (ga-generation (length ga-population)))
+          (display "Best fitness: ") (display (ga-bestFitness)) (newline)
+          (ga-evolve2 (+ x 1)))
 ;        (begin
 ;          (display "Target fitness reached after ") 
 ;          (display x) 

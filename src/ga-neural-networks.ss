@@ -195,8 +195,3 @@
       (if (> (car lst) nn-max)
           (nn-max-index-helper (cdr lst) (+ current-ind 1) (+ max-ind 1) (car lst))
           (nn-max-index-helper (cdr lst) (+ current-ind 1) max-ind nn-max))))
-
-
-      
-      
-
