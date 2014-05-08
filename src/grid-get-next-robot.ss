@@ -1,7 +1,9 @@
+;;(load "ga-neural-networks.ss")
+
 (define (get-next-robot point)
-    (let* ((inst (r-send-attr-packet))
-           (retn (r-act inst 0)))
-      (display retn))
+    (let* ((inst (r-send-attr-packet point))
+           (retn (r-act inst 0 point)))
+      retn)
 
 ;;  (let* ((lst1 (cons point (adjacento point)))
 ;;         (lst0 (randomize lst1))
@@ -27,80 +29,111 @@
   )
 
 ;;Compiles a list of current state attributes and sends them to the neural network
-(define (r-send-attr-packet)
-  (let* ((xR (car robot))
-         (yR (cadr robot)))
-    (set! packet '[(get-node grid xR yR-1)
-                   (get-node grid xR+1 yR)
-                   (get-node grid xR yR+1)
-                   (get-node grid xR-1 yR)
-                   (xR)
-                   (yR)
-                   (car goal)
-                   (cadr goal)])
-    (let ((inst (nn-decide packet)))
-      (display "Robot sends packet: ") (display packet) (newline)
-      inst)))
+(define (r-send-attr-packet agent)
+  (let* ((xR (car agent))
+         (yR (cadr agent))
+         (all (adjacent agent))
+         (free (adjacento agent))
+         (aN (get-block-value all free (list (car agent) (- (cadr agent) 1))))
+         (aE (get-block-value all free (list (+ (car agent) 1) (cadr agent))))
+         (aS (get-block-value all free (list (car agent) (+ (cadr agent) 1))))
+         (aW (get-block-value all free (list (- (car agent) 1) (cadr agent))))
+         (xG (car goal))
+         (yG (cadr goal))
+         (packet (list aN aE aS aW xR yR xG yG))
+         (inst (nn-decide packet)))
+    (display "Robot sends packet: ") (display packet) (newline)
+    inst))
+
+(define (get-block-value all free pair)
+  (if (look-for pair all)
+      (if (look-for pair free)
+          0
+          10000)
+      20000))
+
+(define (look-for pair lst)
+  (if (null? lst)
+      #f
+      (if (equal? pair (car lst))
+          #t
+          (look-for pair (cdr lst)))))
+
+;;THIS IS TEMPORARY UNTIL THE NEURAL NETWORK FILES CAN USE THE INPUT PACKET TO GENERATE A LIST OF INSTRUCTIONS
+;;(define (nn-decide lst)
+;;  (if (< (car lst) 10000)
+;;      (list 'mn)
+;;      (if (< (cadr lst) 10000)
+;;          (list 'me)
+;;          (if (< (cadddr lst) 10000)
+;;              (list 'mw)
+;;              (if (< (caddr lst) 10000)
+;;                  (list 'ms))))))
 
 ;;Takes an instruction list from the neural network and enacts them
-(trace-define (r-act inst numDest)
-  (if (not (null? inst))
-      (let ((x (car inst))
-            (retn '()))
-        (cond
-         ((eqv? x 'mn)
-          (set! retn (list (car robot) (- (cadr robot) 1)))) ;Return coords up from robot
-         ((eqv? x 'me)
-          (set! retn (list (+ (car robot) 1) (cadr robot)))) ;Return coords right from robot
-         ((eqv? x 'ms)
-          (set! retn (list (car robot) (+ (cadr robot) 1)))) ;Return coords down from robot
-         ((eqv? x 'mw)
-          (set! retn (list (- (car robot) 1) (cadr robot)))) ;Return coords left from robot
-         ((eqv? x 'dn)
-          (begin
-            (display "Destroy North:")(newline)
-            (r-blast (list (car robot) (- (cadr robot) 1)))
-            (set! numDest (+ numDest 1))))
-         ((eqv? x 'de)
-          (begin
-            (display "Destroy East:")(newline)
-            (r-blast (list (+ (car robot) 1) (cadr robot)))
-            (set! numDest (+ numDest 1))))
-         ((eqv? x 'ds)
-          (begin
-            (display "Destroy South:")(newline)
-            (r-blast (list (car robot) (+ (cadr robot) 1)))
-            (set! numDest (+ numDest 1))))
-         ((eqv? x 'dw)
-          (begin
-            (display "Destroy West:")(newline)
-            (r-blast (list (- (car robot) 1) (cadr robot)))
-            (set! numDest (+ numDest 1))))
-         ((eqv? x 'bn)
-          (begin
-            (r-build (list (car robot) (- (cadr robot) 1)))
-            (set! retn robot))) ;Return current coords
-         ((eqv? x 'be)
-          (begin
-            (r-build (list (+ (car robot) 1) (cadr robot)))
-            (set! retn robot))) ;Return current coords
-         ((eqv? x 'bs)
-          (begin
-            (r-build (list (car robot) (+ (cadr robot) 1)))
-            (set! retn robot))) ;Return current coords
-         ((eqv? x 'bw)
-          (begin
-            (r-build (list (- (car robot) 1) (cadr robot)))
-            (set! retn robot))) ;Return current coords
-         ((eqv? x 's)
-          (set! retn robot))) ;Return current coords
-        (r-act (cdr inst) numDest)
-        retn)
-      ((if (> numDest 0)
-           (begin
-             (display "Robot did raise on high the Holy Hand Grenade of Antioch and count to ") (display numDest) (newline)
-             robot) ;Return current coords
-           '()))))
+(define (r-act inst numDest agent)
+  (if (null? inst)
+      (begin
+        (if (> numDest 0)
+            (begin
+              (display "Robot did raise on high the Holy Hand Grenade of Antioch and count to ") (display numDest) (newline)))
+        (cond ((< (cadr agent) 0)
+               (list (car agent) (+ (cadr agent) 1)))
+              ((> (car agent) num-col-row)
+               (list (- (car agent) 1) (cadr agent)))
+              ((> (cadr agent) num-col-row)
+               (list (car agent) (- (cadr agent) 1)))
+              ((< (- (car agent) 1) 0)
+               (list (+ (car agent) 1) (cadr agent)))
+              (else
+               agent)))
+      (cond
+       ((eqv? (car inst) 'mn)
+        (r-act (cdr inst) 0 (list (car agent) (- (cadr agent) 1)))) ;Return coords up from agent
+       ((eqv? (car inst) 'me)
+        (r-act '() 0 (list (+ (car agent) 1) (cadr agent)))) ;Return coords right from agent
+       ((eqv? (car inst) 'ms)
+        (r-act '() 0 (list (car agent) (+ (cadr agent) 1)))) ;Return coords down from agent
+       ((eqv? (car inst) 'mw)
+        (r-act '() 0 (list (- (car agent) 1) (cadr agent)))) ;Return coords left from agent
+       ((eqv? (car inst) 'dn)
+        (begin
+          (display "Destroy North:")(newline)
+          (r-blast (list (car agent) (- (cadr agent) 1)))
+          (r-act (cdr inst) (+ numDest 1) agent)))
+       ((eqv? (car inst) 'de)
+        (begin
+          (display "Destroy East:")(newline)
+          (r-blast (list (+ (car agent) 1) (cadr agent)))
+          (r-act (cdr inst) (+ numDest 1) agent)))
+       ((eqv? (car inst) 'ds)
+        (begin
+          (display "Destroy South:")(newline)
+          (r-blast (list (car agent) (+ (cadr agent) 1)))
+          (r-act (cdr inst) (+ numDest 1) agent)))
+       ((eqv? (car inst) 'dw)
+        (begin
+          (display "Destroy West:")(newline)
+          (r-blast (list (- (car agent) 1) (cadr agent)))
+          (r-act (cdr inst) (+ numDest 1) agent)))
+       ((eqv? (car inst) 'bn)
+        (begin
+          (r-build (list (car agent) (- (cadr agent) 1)))
+          (r-act '() 0 agent))) ;Return current coords
+       ((eqv? (car inst) 'be)
+        (begin
+          (r-build (list (+ (car agent) 1) (cadr agent)))
+          (r-act '() 0 agent))) ;Return current coords
+       ((eqv? (car inst) 'bs)
+        (begin
+          (r-build (list (car agent) (+ (cadr agent) 1)))
+          (r-act '() 0 agent))) ;Return current coords
+       ((eqv? (car inst) 'bw)
+        (begin
+          (r-build (list (- (car agent) 1) (cadr agent)))
+          (r-act '() 0 agent))) ;Return current coords
+       ((eqv? (car inst) 's)
+        (r-act '() 0 agent))))) ;Return current coords
 
 ;;Destroys all requested neighboring obstacles
 (define r-blast
