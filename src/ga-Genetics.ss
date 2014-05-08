@@ -24,7 +24,12 @@
         (append (ga-makeRandomChromo2 (- rem 1)) (list (random 2)))
         '())))
 
-(define ga-getFitness 
+(define ga-getFitness
+  (lambda (chromo)
+    ;(display chromo) (newline)
+    (ga-getFitness2 chromo)))
+
+(define ga-getFitness2 
   (lambda (chromo)
     (if (null? chromo)
         0
@@ -107,9 +112,10 @@
 
 (define ga-updateFitnesses
   (lambda (lst)
+    (display lst)
     (if (null? lst)
         '()
-        (append (list (list (getFitness (cadar lst)) (cadar lst))) (ga-updateFitnesses (cdr lst))))))
+        (append (list (list (ga-getFitness (cadar lst)) (cadar lst))) (ga-updateFitnesses (cdr lst))))))
 
 (define ga-generation2
   (lambda (count)

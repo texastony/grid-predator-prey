@@ -1,9 +1,8 @@
 (define (get-next-robot point)
     (let* ((inst (r-send-attr-packet))
            (retn (r-act inst 0)))
-      retn))
+      (display retn))
 
-    ;I think this is worthless:
 ;;  (let* ((lst1 (cons point (adjacento point)))
 ;;         (lst0 (randomize lst1))
 ;;         (flst (r-calculate-h lst0))
@@ -25,7 +24,7 @@
 ;;        point)
 ;;       (else
 ;;        best))))
-    ;END worthless
+  )
 
 ;;Compiles a list of current state attributes and sends them to the neural network
 (define (r-send-attr-packet)
@@ -44,10 +43,10 @@
       inst)))
 
 ;;Takes an instruction list from the neural network and enacts them
-(define (r-act inst numDest)
+(trace-define (r-act inst numDest)
   (if (not (null? inst))
-      (let* ((x (car inst))
-             (retn '()))
+      (let ((x (car inst))
+            (retn '()))
         (cond
          ((eqv? x 'mn)
           (set! retn (list (car robot) (- (cadr robot) 1)))) ;Return coords up from robot
@@ -59,18 +58,22 @@
           (set! retn (list (- (car robot) 1) (cadr robot)))) ;Return coords left from robot
          ((eqv? x 'dn)
           (begin
+            (display "Destroy North:")(newline)
             (r-blast (car robot) (- (cadr robot) 1))
             (set! numDest (+ numDest 1))))
          ((eqv? x 'de)
           (begin
+            (display "Destroy East:")(newline)
             (r-blast (+ (car robot) 1) (cadr robot))
             (set! numDest (+ numDest 1))))
          ((eqv? x 'ds)
           (begin
+            (display "Destroy South:")(newline)
             (r-blast (car robot) (+ (cadr robot) 1))
             (set! numDest (+ numDest 1))))
          ((eqv? x 'dw)
           (begin
+            (display "Destroy West:")(newline)
             (r-blast (- (car robot) 1) (cadr robot))
             (set! numDest (+ numDest 1))))
          ((eqv? x 'bn)
@@ -91,7 +94,7 @@
             (set! retn robot))) ;Return current coords
          ((eqv? x 's)
           (set! retn robot))) ;Return current coords
-        (r-act (cdr inst numDest))
+        (r-act (cdr inst) numDest)
         retn)
       ((if (> numDest 0)
            (begin
@@ -128,11 +131,11 @@
            (else
             (r-build (cdr blst))))))))
 
-(define r-calculate-h
-  (lambda (lst)
-    (map r-h lst)))
+;;(define r-calculate-h
+;;  (lambda (lst)
+;;    (map r-h lst)))
 
-(define r-h
-  (lambda (point)
-    (+ (abs (- (car point) (car goal)))
-       (abs (- (cadr point) (cadr goal))))))
+;;(define r-h
+;;  (lambda (point)
+;;    (+ (abs (- (car point) (car goal)))
+;;       (abs (- (cadr point) (cadr goal))))))
