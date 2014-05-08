@@ -1,159 +1,183 @@
-(define GA-CHROMOLENGTH 32)
-(define GA-TARGETFITNESS 32)
-(define GA-MUTATECHANCE 300)
-(define ga-population '())
+(define ga-population '()) ;; Holds the last generation
+(define ga-fitness-array '()) ;; Holds the each member of the last generation with paired with their fitness
+(define ga-counter 0) ;; Keeps track of what generation we are on
+(define ga-updateFrequency 0) ;; Determines how often to print last generation statistics
+(define ga-population-size 0) ;; Dictates how big the ga-population should be
+(define ga-stochastic-array '()) ;; Holds the last generation paired with 
+(define ga-target-fitness 501) ;; The best possible fitness
+(define ga-stopper 1000000000) ;; A limit on how many generations to use
 
-(define ga-genPop!
-  (lambda (count)
-    (set! ga-population (ga-genPop2 count))))
+;; Called at program start, takes first generation and begins evolution
+(define (ga-run target ga-populationsize x)
+  (set! ga-population-size ga-populationsize)
+  (set! ga-updateFrequency x)
+  (ga-first-gen 99 ga-population-size)
+  (ga-update-generation  ga-population)
+  (ga-evolve #t))
 
-(define ga-genPop2
-  (lambda (count)
-    (if (> count 0)
-        (append (list (ga-makeRandomChromo)) (ga-genPop2 (- count 1)))
-        '())))
+;; Creates the first generation of chromosome strings
+(define (ga-first-gen chrom-len i)
+  (if (> i 0)
+      (begin
+        (let ((b (ga-gen-chrom '() chrom-len))
+              (d (ga-gen-chrom '() chrom-len))
+              (n (ga-gen-chrom '() chrom-len))
+              (m (ga-gen-chrom '() chrom-len)))
+          (set! ga-population (append ga-population (list b d n m))))
+        (ga-first-gen chrom-len (- i 1)))
+      ga-population))
 
-(define ga-makeRandomChromo
-  (lambda ()
-    (let ((chromo (ga-makeRandomChromo2 GA-CHROMOLENGTH)))
-      (list (ga-getFitness chromo) chromo))))
+;; Creates a single, random chromosome string
+(define (ga-gen-chrom lst chrom-len)
+  (if (< (length lst) chrom-len)
+      (ga-gen-chrom (append lst (list (list (random 2) (random 2) (random 2) (random 2) (random 2)))) chrom-len)
+      lst))
 
-(define ga-makeRandomChromo2
-  (lambda (rem)
-    (if (> rem 0)
-        (append (ga-makeRandomChromo2 (- rem 1)) (list (random 2)))
-        '())))
+;; Evolves the ga-population by one generation until desired outcome achieved
+(define (ga-evolve continue)
+  (let* ((temp ga-fitness-array)
+               (best (car (ga-get-best temp 0 '())))
+               (fitness (ga-calculate-fitness best 0))
+               (total (ga-stochastic-calc ga-fitness-array 0))
+               (average-fit (quotient total ga-population-size)))
+  (if (eqv? (remainder ga-counter ga-updateFrequency) -1)
+      (begin
+        (display "On the ") (display ga-counter) (display " generation. ") (newline)
+        (display "  The best individual is: ") (display best) (display ". With a fitness of ") (display fitness) (newline)
+        (display "  The average fitness is ") (display average-fit) (display ".") (newline)))
+  (if continue
+      (begin
+        (ga-update-generation  ga-population)
+        (ga-evolve (ga-check-fitness ga-fitness-array)))
+      (begin
+        (display "Target chromosome achieved: ") (display best) (display " on the ") (display ga-counter) (display " Generation.") (newline)
+        (display "  The average fitness is ") (display average-fit) (display ".") (newline)))))
 
-(define ga-getFitness
-  (lambda (chromo)
-    ;(display chromo) (newline)
-    (ga-getFitness2 chromo)))
+;; Checks ga-population fitnesses to desired outcome fitness
+(define (ga-check-fitness lst)
+  (if (< ga-counter -1)
+      #f
+      (if (null? lst)
+          #t
+          (if (= (car (car lst)) ga-target-fitness)
+              #f
+              (ga-check-fitness (cdr lst))))))
 
-(define ga-getFitness2 
-  (lambda (chromo)
-    (if (null? chromo)
-        0
-        (+ (car chromo) (ga-getFitness (cdr chromo))))))
+;; Recurses through two chromosomes; return true if a match, otherwise false
+(define (ga-match-chrom lst1 lst2)
+  (if (not (null? lst1))
+      (if (= (car lst1) (car lst2))
+          (ga-match-chrom (cdr lst1) (cdr lst2))
+          #f)
+      #t))
 
-(define ga-expandPop
-  (lambda (total vect pop index)
-    (if (null? pop)
-        (list total vect)
+;; Updates ga-fitness-array for current ga-population
+(define (ga-population-fitness ga-population)
+  (set! ga-fitness-array
+        (map
+         (lambda (x)
+           (list (ga-calculate-fitness x 0) x))
+         ga-population)))
+
+;; Calculates fitness of a chromosome
+(define (ga-calculate-fitness child fitness)
+  ;(load "grid-main.ss")
+  (set! gui #f)
+  ;(search grid 500))
+  (random 500))
+
+;; Breeds a new generation from the current ga-population
+(define (ga-update-generation  lst)
+  (set! ga-counter (+ ga-counter 1))
+  (set! ga-fitness-array '())
+  (ga-population-fitness lst)
+  (set! ga-population '())
+  (let ((temp ga-fitness-array))
+    (set! ga-stochastic-array '())
+    (let* ((total (ga-stochastic-calc temp 0)))
+      (ga-breed 0 total))))
+
+;; Creates all children
+(define (ga-breed count total)
+  (if (< count ga-population-size)
+      (let* ((father-int (+ (random total) 1))
+             (mother-int (+ (random total) 1))
+             (father (ga-get-chromo father-int ga-stochastic-array))
+             (mother (ga-get-chromo mother-int ga-stochastic-array))
+             (child (ga-cross mother father))
+             (child (ga-mutation child)))
+        (set! ga-population (append ga-population (list child)))
+        ;(display count) (display " ") (display total) (newline)
+        (ga-breed (+ count 1) total))))
+
+;; Searches the fitness probabilty ranges for the parent
+(define (ga-get-chromo int array)
+  (let ((firstLot (car (car array)))
+        (secondLot (car (cadr array))))
+    (if (or (= int firstLot) (< int firstLot))
+        (cadr (car array))
         (begin
-          (vector-set! vect index (list (+ total (caar pop)) (cadar pop)))
-          (ga-expandPop (+ total (caar pop)) vect (cdr pop) (+ 1 index))))))
+          (if (and (>= secondLot int) (> int firstLot))
+              (cadr (cadr array))
+              (ga-get-chromo int (cdr array)))))))
 
-(define ga-getParent
-  (lambda (target vect index)
-    (if (or (<= (vector-length vect) (+ index 1)) (> (car (vector-ref vect (+ index 1))) target))
-        (list-ref ga-population index)
-        (ga-getParent target vect (+ index 1)))))
+(define (ga-cross mother father)
+  (if (null? mother)
+      '()
+      (append (list (ga-crossover (car mother) (car father))) (ga-cross (cdr mother) (cdr father)))))
 
-(define ga-getParents
-  (lambda ()
-    (let* ((expanded (ga-expandPop 0 (make-vector (length ga-population)) ga-population 0))
-           (total (car expanded))
-           (vect (cadr expanded)))
-      (list (ga-getParent (random total) vect 0) (ga-getParent (random total) vect 0)))))
+;; Creates a child by crossing two parents together
+(define (ga-crossover mother father)
+  (let
+      ((distance (random (length mother)))
+       (side (random 2))) ;side will either be 1 or 0)
+    (if (> side 0) ;if side is 1
+        (append (list-head mother distance) (list-tail father distance))
+        (append (list-head father distance) (list-tail mother distance)))))
 
-(define ga-split
-  (lambda (p div)
-    (list 
-      (ga-sub p div < 0)
-      (ga-sub p div >= 0))))
+;; May mutate a chromosome, possibly more than once
+(define (ga-mutation lst)
+  (map
+   (lambda (x)
+     (if (list? x)
+         (ga-mutation x)
+         (if (eqv? (random 300) 0)
+             (ga-flip x)
+             x)))
+   lst))
 
-(define ga-sub
-  (lambda (p div op pos)
-    (if (null? p)
-        '()
-        (if (op pos div)
-            (append (list (car p)) (ga-sub (cdr p) div op (+ pos 1)))
-            (ga-sub (cdr p) div op (+ pos 1))))))
+;; Flips a 1 to 0 or a 0 to 1
+(define (ga-flip int)
+  (if (> int 0)
+      0
+      1))
 
-(define ga-cross
-  (lambda (p1 p2)
-    ;(display "CROSS") (newline)
-    (let* ((divide (random GA-CHROMOLENGTH))
-           (p1Split (ga-split p1 divide))
-           (p2Split (ga-split p2 divide)))
-      (list 
-        (append (car p1Split) (cadr p2Split))
-        (append (cadr p1Split) (car p2Split))))))
+;; Creates the fitness probabilty ranges array
+(define (ga-stochastic-calc lst total)
+  (if (not (null? lst))
+      (begin
+;        (display "LST: ")(display (car lst))(newline)
+        (let* ((fitness (car (car lst)))
+               (chrom (cdr (car lst)))
+               (lst (cdr lst))
+               (new-total (+ fitness total)))
+          (set! ga-stochastic-array
+                (append ga-stochastic-array
+                        (list (list new-total (car chrom)))))
+          (ga-stochastic-calc lst new-total)))
+      total))
 
-(define ga-mutate
-  (lambda (base)
-    ;(display "MUTATE") (newline)
-    (if (null? base)
-        '()
-        (append (list (list 0 (ga-mutate2 (car (cdr (car base)))))) (ga-mutate (cdr base))))))
+;; Finds the best chromosome
+(define (ga-get-best lst int best)
+  (if (null? lst)
+      best
+      (if (> int (car (car lst)))
+          (ga-get-best (cdr lst) int best)
+          (ga-get-best (cdr lst) (car (car lst)) (cdr (car lst))))))
 
-(define ga-mutate2
-  (lambda (child)
-;    (display "CHILD: ") (display child) (newline) (newline)
-    (if (null? child)
-        '()
-        (if (= 0 (random GA-MUTATECHANCE))
-            (append (list (+ 1 (* -1 (car child)))) (ga-mutate2 (cdr child)))
-            (append (list (car child)) (ga-mutate2 (cdr child)))))))
+;(ga-run 32 100 10)
+;;(ga-run Size-of-Chromosome Size-of-ga-population frequency-of-information)
 
-(define ga-breed
-  (lambda ()
-    (let* ((parents (ga-getParents))
-           (parent1 (car parents))
-           (parent2 (cadr parents))
-           (offspring (ga-cross parent1 parent2))
-           (mutants (ga-mutate offspring)))
-      ;(display mutants) (newline) (newline)
-      mutants)))
 
-(define ga-generation
-  (lambda (count)
-    (ga-updateFitnesses (ga-generation2 count))))
-
-(define ga-updateFitnesses
-  (lambda (lst)
-    (display lst)
-    (if (null? lst)
-        '()
-        (append (list (list (ga-getFitness (cadar lst)) (cadar lst))) (ga-updateFitnesses (cdr lst))))))
-
-(define ga-generation2
-  (lambda (count)
-    (if (= count 0)
-        '()
-        (append (ga-breed) (ga-generation2 (- count 2))))))
-
-(define ga-bestFitness
-  (lambda ()
-    (ga-bestFitness2 
-      (car ga-population)
-      (cdr ga-population))))
-
-(trace-define ga-bestFitness2
-  (lambda (best pop)
-    (if (null? pop)
-        best
-        (ga-bestFitness2 
-          (if (< (car best) (caar pop))
-              (car pop)
-              best)
-          (cdr pop)))))
-
-(define ga-evolve
-  (lambda (startingPop)
-    (ga-genPop! startingPop)
-    (ga-evolve2 0)))
-
-(define ga-evolve2
-  (lambda (x)
-;    (if (not (= TARGETFITNESS (car (bestFitness))))
-        (begin
-          (set! ga-population (ga-generation (length ga-population)))
-          (display "Best fitness: ") (display (ga-bestFitness)) (newline)
-          (ga-evolve2 (+ x 1)))
-;        (begin
-;          (display "Target fitness reached after ") 
-;          (display x) 
-;          (display " generations.") 
-;          (newline)))))
-    ))
+;;(cd "/Users/tonyknapp/git/genetic-scheming/src")
+;;(load "genetics.ss")
