@@ -64,10 +64,10 @@
        (- tot 15)
        (nn-convert-gene-to-weight-helper (cdr lst) (+ 1 ind) (+ tot (* (car lst) (expt 2 ind))))))
                                    
-(trace-define (nn-split-list lst num) ; (nn-split-list '(1 2 3 1 2 3) 3)
+(define (nn-split-list lst num) ; (nn-split-list '(1 2 3 1 2 3) 3)
   (nn-split-list-helper lst '() num)) 
 
-(trace-define (nn-split-list-helper lst-gvn lst-rtn ind-gvn)
+(define (nn-split-list-helper lst-gvn lst-rtn ind-gvn)
   (if (null? lst-gvn)
       lst-rtn
       (nn-split-list-helper (list-tail lst-gvn ind-gvn) (append lst-rtn (list (list-head lst-gvn ind-gvn))) ind-gvn)))
@@ -135,7 +135,7 @@
            ((= ind 3)                            
             (nn-destroy-threshold-helper rtn-lst (cdr gvn-lst) (+ 1 ind)))))))
     
-(define (nn-build lst)
+(define (nn-build lst) ;; Called by nn-decide, returns a build action.
   (let* ((action-lst (nn-helper lst nn-chromo-b))
          (action (nn-max-index action-lst)))
     (cond
