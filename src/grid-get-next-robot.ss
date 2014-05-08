@@ -50,7 +50,7 @@
       (if (look-for pair free)
           0
           10000)
-      20000))
+      (- 20000)))
 
 (define (look-for pair lst)
   (if (null? lst)
