@@ -1,6 +1,6 @@
 ;;(cd "/Users/tonyknapp/git/grid-predator-prey/src")
 
-(define nn-destroy-threshold 0.5)
+(define nn-destroy-threshold (- 3000000))
 (define nn-chromo-m '( '[ '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ]))
 (define nn-chromo-d '( '[ '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ]))
 (define nn-chromo-b '( '[ '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ]))
@@ -77,12 +77,12 @@
   (let* ((action-lst (nn-helper lst nn-chromo-n))
          (action (nn-max-index action-lst)))
     (cond
-     ((= action 0)
-      (nn-move (nn-helper lst nn-chromo-m)))
      ((= action 1)
-      (nn-destroy (nn-helper lst nn-chromo-d)))
+      (nn-move (nn-helper lst nn-chromo-m)))
      ((= action 2)
-      (nn-build (nn-build lst nn-chromo-b)))
+      (nn-destroy (nn-helper lst nn-chromo-d)))
+     ((= action 3)
+      (nn-build (nn-helper lst nn-chromo-b)))
      (else
       (list 's)))))
 
@@ -100,11 +100,11 @@
   (let* ((action-lst (nn-helper lst nn-chromo-m))
          (action (nn-max-index action-lst)))
     (cond
-     ((= action 0)
-      (list 'mn))
      ((= action 1)
-      (list 'me))
+      (list 'mn))
      ((= action 2)
+      (list 'me))
+     ((= action 3)
       (list 'ms))
      (else
       (list 'mw)))))
@@ -119,31 +119,31 @@
           (cond
            ((= ind 0)
             (nn-destroy-threshold-helper (append rtn-lst '('dn)) (cdr gvn-lst) (+ 1 ind)))
-           ((= ind 1)                      
+           ((= ind 1)
             (nn-destroy-threshold-helper (append rtn-lst '('de)) (cdr gvn-lst) (+ 1 ind)))
-           ((= ind 2)                      
+           ((= ind 2)
             (nn-destroy-threshold-helper (append rtn-lst '('ds)) (cdr gvn-lst) (+ 1 ind)))
-           ((= ind 3)                     
+           ((= ind 3)
             (nn-destroy-threshold-helper (append rtn-lst '('dw)) (cdr gvn-lst) (+ 1 ind))))
           (cond
            ((= ind 0)
             (nn-destroy-threshold-helper rtn-lst (cdr gvn-lst) (+ 1 ind)))
            ((= ind 1)
             (nn-destroy-threshold-helper rtn-lst (cdr gvn-lst) (+ 1 ind)))
-           ((= ind 2)                            
+           ((= ind 2)
             (nn-destroy-threshold-helper rtn-lst (cdr gvn-lst) (+ 1 ind)))
-           ((= ind 3)                            
+           ((= ind 3)
             (nn-destroy-threshold-helper rtn-lst (cdr gvn-lst) (+ 1 ind)))))))
     
 (define (nn-build lst) ;; Called by nn-decide, returns a build action.
   (let* ((action-lst (nn-helper lst nn-chromo-b))
          (action (nn-max-index action-lst)))
     (cond
-     ((= action 0)
-      (list 'bn))
      ((= action 1)
-      (list 'be))
+      (list 'bn))
      ((= action 2)
+      (list 'be))
+     ((= action 3)
       (list 'bs))
      (else
       (list 'bw)))))
@@ -151,8 +151,8 @@
 #|=============== Begin Parker Code ================== |#
 
 (define (nn-helper lst tw)
-  (display lst) ;Print our inputs
-  (newline)
+;;  (display lst) ;Print our inputs
+;;  (newline)
   (if (null? tw) ;If there are no layers
       lst ;Return unchanged inputs
       ;else
@@ -170,7 +170,7 @@
 (define (nn-get-node lst twn) ;Receives the inputs this neuron's threshold weights
   (let ((threshold (car twn)) ;Gets a threshold for the neuron
         (weights (cdr twn))) ;Get the weights for the neuron
-    (g ;Return the output of the neuron
+    (nn-g ;Return the output of the neuron
      (+ ;Sum the threshold with the weighted inputs
       (nn-get-activations lst weights) ;Sum the inputs, after multplying them with their weights
       (- threshold))))) ;Make the threshold negavitive
@@ -185,5 +185,5 @@
        (nn-get-activations 
         (cdr lst) (cdr w)))))
 
-(define (nn-sigmoid x)
+(define (nn-g x)
   (/ 1 (+ 1 (exp (- x)))))
