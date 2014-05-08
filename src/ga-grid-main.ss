@@ -5,7 +5,7 @@
 (define step-count 0)
 (define gui #t)
 (if gui
-    (set! pause-num 1000000))
+    (set! pause-num 500))
 (if gui
     (begin
       (load "grid-class.ss")
