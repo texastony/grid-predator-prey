@@ -67,6 +67,7 @@
 
 (define ga-cross
   (lambda (p1 p2)
+    ;(display "CROSS") (newline)
     (let* ((divide (random GA-CHROMOLENGTH))
            (p1Split (ga-split p1 divide))
            (p2Split (ga-split p2 divide)))
@@ -76,18 +77,18 @@
 
 (define ga-mutate
   (lambda (base)
-    (display base) (newline) (newline)
+    ;(display "MUTATE") (newline)
     (if (null? base)
         '()
-        (append (list (list 0 (ga-mutate2 (cdar base)))) (ga-mutate (cdr base))))))
+        (append (list (list 0 (ga-mutate2 (car (cdr (car base)))))) (ga-mutate (cdr base))))))
 
 (define ga-mutate2
   (lambda (child)
-    (display child) (newline) (newline)
+;    (display "CHILD: ") (display child) (newline) (newline)
     (if (null? child)
         '()
         (if (= 0 (random GA-MUTATECHANCE))
-            (append (list (+ 1 (* -1 (cadr child)))) (ga-mutate2 (cdr child)))
+            (append (list (+ 1 (* -1 (car child)))) (ga-mutate2 (cdr child)))
             (append (list (car child)) (ga-mutate2 (cdr child)))))))
 
 (define ga-breed
@@ -97,7 +98,7 @@
            (parent2 (cadr parents))
            (offspring (ga-cross parent1 parent2))
            (mutants (ga-mutate offspring)))
-      (display mutants) (newline) (newline)
+      ;(display mutants) (newline) (newline)
       mutants)))
 
 (define ga-generation
@@ -106,13 +107,15 @@
 
 (define ga-updateFitnesses
   (lambda (lst)
-    (append (list (list (getFitness (cadar lst)) (cadar lst))) (ga-updateFitnesses (cdr lst)))))
+    (if (null? lst)
+        '()
+        (append (list (list (getFitness (cadar lst)) (cadar lst))) (ga-updateFitnesses (cdr lst))))))
 
 (define ga-generation2
   (lambda (count)
     (if (= count 0)
         '()
-        (append (ga-breed) (ga-generation (- count 2))))))
+        (append (ga-breed) (ga-generation2 (- count 2))))))
 
 (define ga-bestFitness
   (lambda ()
@@ -120,7 +123,7 @@
       (car ga-population)
       (cdr ga-population))))
 
-(define ga-bestFitness2
+(trace-define ga-bestFitness2
   (lambda (best pop)
     (if (null? pop)
         best
