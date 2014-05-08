@@ -25,7 +25,7 @@
               (d (ga-gen-chrom '() chrom-len))
               (n (ga-gen-chrom '() chrom-len))
               (m (ga-gen-chrom '() chrom-len)))
-          (set! ga-population (append ga-population (list b d n m))))
+          (set! ga-population (append ga-population (list (list b d n m)))))
         (ga-first-gen chrom-len (- i 1)))
       ga-population))
 
