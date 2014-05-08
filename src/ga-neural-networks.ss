@@ -1,5 +1,7 @@
 ;;(cd "/Users/tonyknapp/git/grid-predator-prey/src")
 
+;;(define nn-destroy-threshold (- 3000000))
+
 (define nn-destroy-threshold .5)
 (define nn-chromo-m '( '[ '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ]))
 (define nn-chromo-d '( '[ '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ]))
@@ -131,9 +133,9 @@
             (nn-destroy-threshold-helper rtn-lst (cdr gvn-lst) (+ 1 ind)))
            ((= ind 1)
             (nn-destroy-threshold-helper rtn-lst (cdr gvn-lst) (+ 1 ind)))
-           ((= ind 2)                            
+           ((= ind 2)
             (nn-destroy-threshold-helper rtn-lst (cdr gvn-lst) (+ 1 ind)))
-           ((= ind 3)                            
+           ((= ind 3)
             (nn-destroy-threshold-helper rtn-lst (cdr gvn-lst) (+ 1 ind)))))))
     
 (define (nn-build lst) ;; Called by nn-decide, returns a build action.
@@ -152,8 +154,8 @@
 #|=============== Begin Parker Code ================== |#
 
 (define (nn-helper lst tw)
-  ;(display lst) ;Print our inputs
-  ;(newline)
+;;  (display lst) ;Print our inputs
+;;  (newline)
   (if (null? tw) ;If there are no layers
       lst ;Return unchanged inputs
       ;else
