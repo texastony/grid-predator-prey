@@ -59,38 +59,38 @@
          ((eqv? x 'dn)
           (begin
             (display "Destroy North:")(newline)
-            (r-blast (car robot) (- (cadr robot) 1))
+            (r-blast (list (car robot) (- (cadr robot) 1)))
             (set! numDest (+ numDest 1))))
          ((eqv? x 'de)
           (begin
             (display "Destroy East:")(newline)
-            (r-blast (+ (car robot) 1) (cadr robot))
+            (r-blast (list (+ (car robot) 1) (cadr robot)))
             (set! numDest (+ numDest 1))))
          ((eqv? x 'ds)
           (begin
             (display "Destroy South:")(newline)
-            (r-blast (car robot) (+ (cadr robot) 1))
+            (r-blast (list (car robot) (+ (cadr robot) 1)))
             (set! numDest (+ numDest 1))))
          ((eqv? x 'dw)
           (begin
             (display "Destroy West:")(newline)
-            (r-blast (- (car robot) 1) (cadr robot))
+            (r-blast (list (- (car robot) 1) (cadr robot)))
             (set! numDest (+ numDest 1))))
          ((eqv? x 'bn)
           (begin
-            (r-build (car robot) (- (cadr robot) 1))
+            (r-build (list (car robot) (- (cadr robot) 1)))
             (set! retn robot))) ;Return current coords
          ((eqv? x 'be)
           (begin
-            (r-build (+ (car robot) 1) (cadr robot))
+            (r-build (list (+ (car robot) 1) (cadr robot)))
             (set! retn robot))) ;Return current coords
          ((eqv? x 'bs)
           (begin
-            (r-build (car robot) (+ (cadr robot) 1))
+            (r-build (list (car robot) (+ (cadr robot) 1)))
             (set! retn robot))) ;Return current coords
          ((eqv? x 'bw)
           (begin
-            (r-build (- (car robot) 1) (cadr robot))
+            (r-build (list (- (car robot) 1) (cadr robot)))
             (set! retn robot))) ;Return current coords
          ((eqv? x 's)
           (set! retn robot))) ;Return current coords
