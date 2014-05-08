@@ -31,7 +31,7 @@
   (lambda (grid count stop-count)
     (cond 
       ((equal? robot goal)
-        (display "Robot attains the goal") (newline)
+        (display "Robot attains the goal: ") (display count) (newline)
        (if gui
         (draw-robot))
        count)

@@ -3,9 +3,6 @@
 (define (get-next-robot point)
     (let* ((inst (r-send-attr-packet point))
            (retn (r-act inst 0 point)))
-      (if (not (equal? retn point))
-          (begin
-            (display "MOVED!") (newline)))
       retn)
 
 ;;  (let* ((lst1 (cons point (adjacento point)))
