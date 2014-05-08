@@ -25,7 +25,7 @@ This is not intended to be a repeat of the mini-max assignment, although you may
 3 plys. For the best grade, make use of other AI methods, such as NNs, CBR, or production systems.
 
 ##Thursday, 5:00 AM Update##
-Tony is going to crash. Katie, Tony, Teagan, and Peter met in the Robotics lab at 6:00PM. Katie left at midnight. Teagan left at 4:30AM. Tony is leaving at 5:10AM. We are so increadbly close...
+TexasTony is going to crash. KatieBurke11, TexasTony, Tatwater, and Ren1us met in the Robotics lab at 6:00PM. KatieBurke11 left at midnight. Tatwater left at 4:30AM. TexasTony is leaving at 5:10AM. Ren1us is still working. We are so increadbly close...
 
 "This is an impressive attempt at doing something somewhat intelligent." -- Famous last words.
 
@@ -65,7 +65,7 @@ The Agent's X and Y coordinate, and the Openet's X and Y (Discrete between 0 and
 
 
 ###Division of Labor###
-To me (Tony), it would make sense if we divided the labor amoung the following lines. One person works on the Neural Network, another on the Sensors and Outputs, another works on GA, and another on the Fitness function.
+To me (TexasTony), it would make sense if we divided the labor amoung the following lines. One person works on the Neural Network, another on the Sensors and Outputs, another works on GA, and another on the Fitness function.
 
 ##Git Process##
 
