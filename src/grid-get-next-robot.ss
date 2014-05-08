@@ -71,7 +71,8 @@
 ;;                  (list 'ms))))))
 
 ;;Takes an instruction list from the neural network and enacts them
-(define (r-act inst numDest agent)
+(trace-define (r-act inst numDest agent)
+  (display "r-act") (newline)
   (if (null? inst)
       (begin
         (if (> numDest 0)
@@ -87,6 +88,8 @@
                (list (+ (car agent) 1) (cadr agent)))
               (else
                agent)))
+      (begin
+        (display (car agent)) (newline)
       (cond
        ((eqv? (car inst) 'mn)
         (r-act (cdr inst) 0 (list (car agent) (- (cadr agent) 1)))) ;Return coords up from agent
@@ -133,7 +136,7 @@
           (r-build (list (- (car agent) 1) (cadr agent)))
           (r-act '() 0 agent))) ;Return current coords
        ((eqv? (car inst) 's)
-        (r-act '() 0 agent))))) ;Return current coords
+        (r-act '() 0 agent)))))) ;Return current coords
 
 ;;Destroys all requested neighboring obstacles
 (define r-blast
