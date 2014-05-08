@@ -1,19 +1,21 @@
+(load "ga-neural-networks.ss")
+
 (define ga-population '()) ;; Holds the last generation
 (define ga-fitness-array '()) ;; Holds the each member of the last generation with paired with their fitness
 (define ga-counter 0) ;; Keeps track of what generation we are on
-(define ga-updateFrequency 0) ;; Determines how often to print last generation statistics
+(define ga-updateFrequency 1) ;; Determines how often to print last generation statistics
 (define ga-population-size 0) ;; Dictates how big the ga-population should be
 (define ga-stochastic-array '()) ;; Holds the last generation paired with 
 (define ga-target-fitness 501) ;; The best possible fitness
 (define ga-stopper 1000000000) ;; A limit on how many generations to use
 
 ;; Called at program start, takes first generation and begins evolution
-(define (ga-run target ga-populationsize x)
-  (set! ga-population-size ga-populationsize)
-  (set! ga-updateFrequency x)
+(define (ga-run populationsize)
+  (set! ga-population-size populationsize)
   (ga-first-gen 99 ga-population-size)
-  (ga-update-generation  ga-population)
-  (ga-evolve #t))
+  ;(ga-update-generation  ga-population)
+  ;(ga-evolve #t))
+  )
 
 ;; Creates the first generation of chromosome strings
 (define (ga-first-gen chrom-len i)
