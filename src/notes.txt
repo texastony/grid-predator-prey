@@ -1,0 +1,28 @@
+DNA:
+Comprised of four chromosomes (sets of neural network weights)
+Determine whether or not to stay
+set-chromI [(_ _ _ _ _ _)(_ _ _ _ _ _)...]
+
+Determine whether or not to move/where to move
+set-chromM [(_ _ _ _ _ _)(_ _ _ _ _ _)...]
+
+Determine whether or not to destroy/where to destroy
+set-chromD [(_ _ _ _ _ _)(_ _ _ _ _ _)...]
+
+Determine whether or not to build/where to build
+set-chromB [(_ _ _ _ _ _)(_ _ _ _ _ _)...]
+
+Each neural network takes its chromosome and determines its own outcome
+
+
+TASK BREAKDOWN:
+Genetic algorithm evolves the neural network
+
+Agent sends current situation attributes (neighborNorth, neighborEast,
+ neighborSouth, neighborWest, xPosSelf, yPosSelf, xPosOther, yPosOther) to
+ neural networks and gets back the move it should make ('bn) or ('dn 'ds) etc.
+
+Neural networks (one to determine which type of action to take that calls the
+ others, one to determine where to move, one to determine where to destroy, and
+ one to determine where to build) take chromosomes of six-bit binary numbers
+ that represent individual neural network weights.

@@ -30,7 +30,8 @@
              (y (cadr pt)))
         (cond ((= (get-node grid x y) obstacle)
           (set-node! grid x y free)
-          (send canvas make-now-free x y)))
+               (if gui
+                   (send canvas make-now-free x y))))
         (gblast (cdr lst))))))
 
 (define gbuild
@@ -43,7 +44,8 @@
         (cond 
           ((= (get-node grid x y) free)
             (set-node! grid x y obstacle)
-            (send canvas make-obstacle x y))
+           (if gui
+               (send canvas make-obstacle x y)))
           (else
             (gbuild (cdr blst))))))))
 
