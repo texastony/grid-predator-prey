@@ -83,10 +83,10 @@
 
 ;; Calculates fitness of a chromosome
 (define (ga-calculate-fitness child fitness)
-  ;(load "grid-main.ss")
+  (load "grid-main.ss")
   (set! gui #f)
-  ;(search grid 500))
-  (random 500))
+  (search grid 500))
+  ;(random 500))
 
 ;; Breeds a new generation from the current ga-population
 (define (ga-update-generation  lst)
