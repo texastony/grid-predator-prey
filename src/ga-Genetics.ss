@@ -88,7 +88,7 @@
   (nn-set-chromo-d! (cadr child))
   (nn-set-chromo-n! (caddr child))
   (nn-set-chromo-m! (cadddr child))
-  (search grid 500))
+  (- 501 (search grid 500)))
 ;  (random 500))
 
 ;; Breeds a new generation from the current ga-population

@@ -1,4 +1,4 @@
-(define num-col-row 4)
+(define num-col-row 3)
 (define size (floor (/ 700 num-col-row)))
 (define obstacle-density 0)
 (define pause-num 0)
