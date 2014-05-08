@@ -1,6 +1,6 @@
-(define num-col-row 6)
+(define num-col-row 10)
 (define size (floor (/ 700 num-col-row)))
-(define obstacle-density 0)
+(define obstacle-density 10)
 (define pause-num 0)
 (define step-count 0)
 (define gui #f)
