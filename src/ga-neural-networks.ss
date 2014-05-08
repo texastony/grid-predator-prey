@@ -1,3 +1,5 @@
+;;(cd "/Users/tonyknapp/git/grid-predator-prey/src")
+
 (define nn-destroy-threshold 0.5)
 (define nn-chromo-m '( '[ '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ]))
 (define nn-chromo-d '( '[ '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ]))
@@ -9,43 +11,46 @@
   (let* ((decimal-lst (nn-map-binary-to-decimal lst))
          (first-layer-lst (list-head decimal-lst 45))
          (second-layer-lst (list-head (list-tail decimal-lst 45) 30))
-         (third-layer-lst (list-tail decimal-lst 24)))
+         (third-layer-lst (list-tail decimal-lst 75)))
     (set! nn-chromo-m (list
                     (nn-split-list first-layer-lst 9)
                     (nn-split-list second-layer-lst 6)
                     (nn-split-list third-layer-lst 6)))))
 
-(define (nn-set-chromo-d! lst) ;; Called by GA, sets weights for 
+(define (nn-set-chromo-d! lst) ;; Called by GA, sets weights for Destroy Network
   (let* ((decimal-lst (nn-map-binary-to-decimal lst))
          (first-layer-lst (list-head decimal-lst 45))
          (second-layer-lst (list-head (list-tail decimal-lst 45) 30))
-         (third-layer-lst (list-tail decimal-lst 24)))
+         (third-layer-lst (list-tail decimal-lst 75)))
     (set! nn-chromo-d (list
                     (nn-split-list first-layer-lst 9)
                     (nn-split-list second-layer-lst 6)
                     (nn-split-list third-layer-lst 6)))))
 
-(define (nn-set-chromo-n! lst)
+(define (nn-set-chromo-n! lst) ;; Called by GA, sets weights for Nucleus Network
   (let* ((decimal-lst (nn-map-binary-to-decimal lst))
          (first-layer-lst (list-head decimal-lst 45))
          (second-layer-lst (list-head (list-tail decimal-lst 45) 30))
-         (third-layer-lst (list-tail decimal-lst 24)))
+         (third-layer-lst (list-tail decimal-lst 75)))
     (set! nn-chromo-n (list
                     (nn-split-list first-layer-lst 9)
                     (nn-split-list second-layer-lst 6)
                     (nn-split-list third-layer-lst 6)))))
 
-(define (nn-set-chromo-b! lst)
+(define (nn-set-chromo-b! lst) ;; Called by GA, sets weights for Build Network
   (let* ((decimal-lst (nn-map-binary-to-decimal lst))
          (first-layer-lst (list-head decimal-lst 45))
          (second-layer-lst (list-head (list-tail decimal-lst 45) 30))
-         (third-layer-lst (list-tail decimal-lst 24)))
+         (third-layer-lst (list-tail decimal-lst 75)))
+;;    (display (length first-layer-lst)) (newline)
+;;    (display (length second-layer-lst)) (newline)
+;;    (display (length third-layer-lst)) (newline)
     (set! nn-chromo-b (list
                     (nn-split-list first-layer-lst 9)
                     (nn-split-list second-layer-lst 6)
                     (nn-split-list third-layer-lst 6)))))
 
-(define (nn-map-binary-to-decimal lst)
+(define (nn-map-binary-to-decimal lst) ;; Convert a 5 bit binary number to a value between -16 to 15
   (map
    (lambda (x)
      (nn-convert-gene-to-weight x))
@@ -59,10 +64,10 @@
        (- tot 15)
        (nn-convert-gene-to-weight-helper (cdr lst) (+ 1 ind) (+ tot (* (car lst) (expt 2 ind))))))
                                    
-(define (nn-split-list lst num) ; (nn-split-list '(1 2 3 1 2 3) 3)
+(trace-define (nn-split-list lst num) ; (nn-split-list '(1 2 3 1 2 3) 3)
   (nn-split-list-helper lst '() num)) 
 
-(define (nn-split-list-helper lst-gvn lst-rtn ind-gvn)
+(trace-define (nn-split-list-helper lst-gvn lst-rtn ind-gvn)
   (if (null? lst-gvn)
       lst-rtn
       (nn-split-list-helper (list-tail lst-gvn ind-gvn) (append lst-rtn (list (list-head lst-gvn ind-gvn))) ind-gvn)))
