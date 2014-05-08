@@ -28,10 +28,12 @@ This is not intended to be a repeat of the mini-max assignment, although you may
 TexasTony believes that the GA is failing to evolve in the right direction for the following reasons. 
 
 1. The population size is too small.
-2. We did not train nn-b, nn-d, and nn-m before traing the entire DNA.
-3. The Fitness is based on one run instead of an average.
+2. We did not train nn-b, nn-d, and nn-m before traing the entire DNA. PARKER: Not an issue.
+3. The Fitness is based on one run instead of an average. PARKER: As long as they all start on the same spot.
 4. To my knowledge, we never proved that the GA breed properly.
-5. We may have the wrong inputs. We may have wished to have kept the old input system instead of the current one, as it was more explicit. In the words of Parker, the more we can do pre-processing wise for the GA, the better.
+5. We may have the wrong inputs. We may have wished to have kept the old input system instead of the current one, as it was more explicit. In the words of Parker, the more we can do pre-processing wise for the GA, the better. PARKER: So we do need to change our inputs. We should drop the X and Y coordinate of the agent, and we should use the REALTIVE X and Y coordinates of the opponent, possibly the distance to the walls as well.
+
+PARKER: Figure out how to write to files every so often. Also, MAKE SURE THAT WE ARE RUNNING A GENERATION ON THE SAME GRID.
 
 I should clarify. All of the above were meant to happen before we set this thing on full scale training. TexasTony failed to communicate that to his collaborators, because he focused to much on other problems.
 
