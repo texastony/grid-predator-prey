@@ -1,3 +1,28 @@
+(define destroy-threshold 0.5)
+(define chromo-m '( '[ '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ]))
+(define chromo-d '( '[ '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ]))
+(define chromo-b '( '[ '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ]))
+(define chromo-n '( '[ '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) '(0 0 0 0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ] '[ '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) '(0 0 0 0 0 0) ]))
+
+
+(define (nn-set-chromo-m! lst)
+  (let* ((decimal-lst (nn-map-binary-to-decimal lst))
+         (first-layer-lst (list-head decimal-lst 45))
+         
+(define (nn-map-binary-to-decimal lst)
+  (map
+   (lambda (x)
+     (nn-convert-gene-to-weight x))
+   lst))
+
+(define (nn-convert-gene-to-weight lst)
+  (nn-convert-gene-to-weight-helper lst 0 0))
+
+(define (nn-convert-gene-to-weight-helper lst ind tot)
+   (if (null? lst)
+       (- tot 15)
+       (nn-convert-gene-to-weight-helper (cdr lst) (+ 1 ind) (+ tot (* (car lst) (expt 2 ind))))))
+         
 ;A list of all layers
 ;- A list of all neurons on that layer
 ; - A list of weights for each inputs of the neuron and a threshold weight:
@@ -46,21 +71,9 @@
        (get-activations 
         (cdr lst) (cdr w)))))
 
-(trace-define (g x)              
-  (if (> x 0) 
-      1 ;if output is greater than 0, return 1
-      ;else
-      0)) ;Return 0
-
-(define (nn-convert-gene-to-weight lst)
-  (nn-convert-gene-to-weight-helper lst 0 0))
-
-(define (nn-convert-gene-to-weight-helper lst ind tot)
-   (if (null? lst)
-       (- tot 15)
-       (nn-convert-gene-to-weight-helper (cdr lst) (+ 1 ind) (+ tot (* (car lst) (expt 2 ind))))))
+(define (sigmoid x)
+  (/ 1 (+ 1 (exp (- x)))))
        
-
 (define (nn-decide lst) ;;Called by agent. Returns an instruction list.
   (let* ((action-lst (nn-helper lst chromo-n))
          (action (nn-max-index action-lst)))
@@ -88,11 +101,32 @@
       (list 'mw)))))
 
 (define (nn-destroy lst)
-  (let ((action-lst (nn-helper lst chromo-d)))
-    ()))
-
-(define (nn-destroy-threshold lst) ;;Given a list like (0.4 0.6 0.7 0.4) --> (#f #t #t #f)
-
+  (nn-destroy-threshold '() (nn-helper lst chromo-d) 0))
+    
+;;Given a list like (0.4 0.6 0.7 0.4) --> ('de 'ds)
+(define (nn-destroy-threshold-helper rtn-lst gvn-lst ind) 
+  (if (null? gvn-lst)
+      rtn-lst
+      (if (> (car gvn-lst) 0.5)
+          (cond
+           ((= ind 0)
+            (nn-destroy-threshold-helper (append rtn-lst '('dn)) (cdr gvn-lst) (+ 1 ind)))
+           ((= ind 1)                      
+            (nn-destroy-threshold-helper (append rtn-lst '('de)) (cdr gvn-lst) (+ 1 ind)))
+           ((= ind 2)                      
+            (nn-destroy-threshold-helper (append rtn-lst '('ds)) (cdr gvn-lst) (+ 1 ind)))
+           ((= ind 3)                     
+            (nn-destroy-threshold-helper (append rtn-lst '('dw)) (cdr gvn-lst) (+ 1 ind))))
+          (cond
+           ((= ind 0)
+            (nn-destroy-threshold-helper rtn-lst (cdr gvn-lst) (+ 1 ind)))
+           ((= ind 1)
+            (nn-destroy-threshold-helper rtn-lst (cdr gvn-lst) (+ 1 ind)))
+           ((= ind 2)                            
+            (nn-destroy-threshold-helper rtn-lst (cdr gvn-lst) (+ 1 ind)))
+           ((= ind 3)                            
+            (nn-destroy-threshold-helper rtn-lst (cdr gvn-lst) (+ 1 ind)))))))
+    
 (define (nn-build lst)
   (let* ((action-lst (nn-helper lst chromo-b))
          (action (nn-max-index action-lst)))
@@ -115,6 +149,8 @@
       (if (> (car lst) nn-max)
           (nn-max-index-helper (cdr lst) (+ current-ind 1) (+ max-ind 1) (car lst))
           (nn-max-index-helper (cdr lst) (+ current-ind 1) max-ind nn-max))))
+
+
       
       
 
