@@ -60,15 +60,15 @@
           (look-for pair (cdr lst)))))
 
 ;;THIS IS TEMPORARY UNTIL THE NEURAL NETWORK FILES CAN USE THE INPUT PACKET TO GENERATE A LIST OF INSTRUCTIONS
-(define (nn-decide lst)
-  (if (< (car lst) 10000)
-      (list 'mn)
-      (if (< (cadr lst) 10000)
-          (list 'me)
-          (if (< (cadddr lst) 10000)
-              (list 'mw)
-              (if (< (caddr lst) 10000)
-                  (list 'ms))))))
+;;(define (nn-decide lst)
+;;  (if (< (car lst) 10000)
+;;      (list 'mn)
+;;      (if (< (cadr lst) 10000)
+;;          (list 'me)
+;;          (if (< (cadddr lst) 10000)
+;;              (list 'mw)
+;;              (if (< (caddr lst) 10000)
+;;                  (list 'ms))))))
 
 ;;Takes an instruction list from the neural network and enacts them
 (define (r-act inst numDest agent)
