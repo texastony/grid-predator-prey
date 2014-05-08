@@ -3,7 +3,7 @@
 (define obstacle-density 20)
 (define pause-num 0)
 (define step-count 0)
-(define gui #f)
+(define gui #t)
 (if gui
     (set! pause-num 1000000))
 (if gui
@@ -33,3 +33,5 @@
       (draw-goal)
       (draw-robot)
       (show canvas)))
+
+(search grid 10000)
