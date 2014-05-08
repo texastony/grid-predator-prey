@@ -1,11 +1,11 @@
-(define num-col-row 30)
+(define num-col-row 4)
 (define size (floor (/ 700 num-col-row)))
 (define obstacle-density 0)
-(define pause-num 500)
+(define pause-num 0)
 (define step-count 0)
-(define gui #t)
+(define gui #f)
 (if gui
-    (set! pause-num 500))
+    (set! pause-num 5000))
 (if gui
     (begin
       (load "grid-class.ss")

@@ -74,10 +74,9 @@
 
 
 (define (nn-decide lst) ;;Called by agent. Returns an instruction list.
-  (display "HERE")(newline)
   (let* ((action-lst (nn-helper lst nn-chromo-n))
          (action (nn-max-index action-lst)))
-    (display action) (newline)
+    ;(display action) (newline)
     (cond
      ((= action 1)
       (nn-move (nn-helper lst nn-chromo-m)))
@@ -111,22 +110,22 @@
      (else
       (list 'mw)))))
 
-(trace-define (nn-destroy lst) ;; Called by nn-decide, returns a list of destroy commands
+(define (nn-destroy lst) ;; Called by nn-decide, returns a list of destroy commands
   (nn-destroy-threshold-helper '() (nn-helper lst nn-chromo-d) 0))
     
-(trace-define (nn-destroy-threshold-helper rtn-lst gvn-lst ind) ;; Called by nn-destroy, determines if outputs are indicitive of destruction or not.
+(define (nn-destroy-threshold-helper rtn-lst gvn-lst ind) ;; Called by nn-destroy, determines if outputs are indicitive of destruction or not.
   (if (null? gvn-lst)    ;; Given a list like (0.4 0.6 0.7 0.4) --> ('de 'ds)
       rtn-lst
       (if (> (car gvn-lst) nn-destroy-threshold)
           (cond
            ((= ind 0)
-            (nn-destroy-threshold-helper (append rtn-lst '('dn)) (cdr gvn-lst) (+ 1 ind)))
+            (nn-destroy-threshold-helper (append rtn-lst (list 'dn)) (cdr gvn-lst) (+ 1 ind)))
            ((= ind 1)                      
-            (nn-destroy-threshold-helper (append rtn-lst '('de)) (cdr gvn-lst) (+ 1 ind)))
+            (nn-destroy-threshold-helper (append rtn-lst (list 'de)) (cdr gvn-lst) (+ 1 ind)))
            ((= ind 2)                      
-            (nn-destroy-threshold-helper (append rtn-lst '('ds)) (cdr gvn-lst) (+ 1 ind)))
+            (nn-destroy-threshold-helper (append rtn-lst (list 'ds)) (cdr gvn-lst) (+ 1 ind)))
            ((= ind 3)                     
-            (nn-destroy-threshold-helper (append rtn-lst '('dw)) (cdr gvn-lst) (+ 1 ind))))
+            (nn-destroy-threshold-helper (append rtn-lst (list 'dw)) (cdr gvn-lst) (+ 1 ind))))
           (cond
            ((= ind 0)
             (nn-destroy-threshold-helper rtn-lst (cdr gvn-lst) (+ 1 ind)))
