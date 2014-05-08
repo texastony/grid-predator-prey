@@ -156,7 +156,7 @@
   (if (null? tw) ;If there are no layers
       lst ;Return unchanged inputs
       ;else
-      (let ((next-level (get-next-level lst (car tw)))) ;Pass all inputs and the first layer thresholds
+      (let ((next-level (nn-get-next-level lst (car tw)))) ;Pass all inputs and the first layer thresholds
         (nn-helper next-level (cdr tw))))) ;Pass next level inputs and the remaining layer threshold weights
 
 (define (nn-get-next-level lst twl) ;Receives list of inputs for this layer and this layer's threshold weights
@@ -164,15 +164,15 @@
       '() ;No next-level, done
       ;else
       (cons ;Return a list of:
-       (get-node lst (car twl)) ;Pass inputs and the first neuron's thresholds on this layer
-       (get-next-level lst (cdr twl))))) ;Recurse with the inputs and the rest of the neurons' thresholds on this layer
+       (nn-get-node lst (car twl)) ;Pass inputs and the first neuron's thresholds on this layer
+       (nn-get-next-level lst (cdr twl))))) ;Recurse with the inputs and the rest of the neurons' thresholds on this layer
 
 (define (nn-get-node lst twn) ;Receives the inputs this neuron's threshold weights
   (let ((threshold (car twn)) ;Gets a threshold for the neuron
         (weights (cdr twn))) ;Get the weights for the neuron
     (g ;Return the output of the neuron
      (+ ;Sum the threshold with the weighted inputs
-      (get-activations lst weights) ;Sum the inputs, after multplying them with their weights
+      (nn-get-activations lst weights) ;Sum the inputs, after multplying them with their weights
       (- threshold))))) ;Make the threshold negavitive
 
 (define (nn-get-activations lst w)
@@ -182,7 +182,7 @@
        (* 
         (car lst) 
         (car w)) 
-       (get-activations 
+       (nn-get-activations 
         (cdr lst) (cdr w)))))
 
 (define (nn-sigmoid x)
