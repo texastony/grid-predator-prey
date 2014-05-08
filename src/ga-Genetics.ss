@@ -4,7 +4,7 @@
 (define updateFrequency 0) ;; Determines how often to print last generation statistics
 (define population-size 0) ;; Dictates how big the population should be
 (define stochastic-array '()) ;; Holds the last generation paired with 
-(define target-fitness 500) ;; The best possible fitness
+(define target-fitness 501) ;; The best possible fitness
 (define stopper 1000000000) ;; A limit on how many generations to use
 
 ;; Called at program start, takes first generation and begins evolution
@@ -19,8 +19,11 @@
 (define (first-gen chrom-len i)
   (if (> i 0)
       (begin
-        (let ((x (gen-chrom '() chrom-len)))
-          (set! population (append population (list x))))
+        (let ((b (gen-chrom '() chrom-len))
+              (d (gen-chrom '() chrom-len))
+              (n (gen-chrom '() chrom-len))
+              (m (gen-chrom '() chrom-len)))
+          (set! population (append population (list b d n m))))
         (first-gen chrom-len (- i 1)))
       population))
 
