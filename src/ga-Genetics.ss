@@ -3,7 +3,7 @@
 (define ga-population '()) ;; Holds the last generation
 (define ga-fitness-array '()) ;; Holds the each member of the last generation with paired with their fitness
 (define ga-counter 0) ;; Keeps track of what generation we are on
-(define ga-updateFrequency 1) ;; Determines how often to print last generation statistics
+(define ga-updateFrequency 50) ;; Determines how often to print last generation statistics
 (define ga-population-size 100) ;; Dictates how big the ga-population should be
 (define ga-stochastic-array '()) ;; Holds the last generation paired with 
 (define ga-target-fitness 501) ;; The best possible fitness
@@ -17,11 +17,11 @@
   (ga-evolve #t))
 
 ;; A function to print chromosomes to at the update frequency
-(define (ga-store-DNA)
+(trace-define (ga-store-DNA)
   (let* ((temp ga-fitness-array)
-         (best (ga-get-best-with-fit lst best))
+         (best (ga-get-best-with-fit ga-fitness-array (list 0 (list 0))))
          (best-fit (car best)))
-    (if (> best-ft ga-last-best-fit)
+    (if (> best-fit ga-last-best-fit)
         (let* ((jake (open-input-output-file "best-DNA.txt")))
           (write best jake)
           (close-port jake)
@@ -116,8 +116,8 @@
   (set! ga-counter (+ ga-counter 1))
   (set! ga-fitness-array '())
   (ga-population-fitness lst)
-  (if (eqv? (remainder counter updateFrequency) 0)
-      (ga-store-population))
+  (if (eqv? (remainder ga-counter ga-updateFrequency) 0)
+      (ga-store-DNA))
   (set! ga-population '())
   (set! ga-stochastic-array '())
   (let* ((total (ga-stochastic-calc ga-fitness-array 0)))
@@ -202,12 +202,12 @@
           (ga-get-best (cdr lst) (car (car lst)) (cdr (car lst))))))
         
 ;; Finds the best chromosome, and returns it with its fitness
-(define (ga-get-best-with-fit lst best)
+(trace-define (ga-get-best-with-fit lst best)
   (if (null? lst)
       best
-      (if (> (car best) (car (car lst)))
-          (ga-get-best (cdr lst) best)
-          (ga-get-best (cdr lst)  (car lst)))))
+      (if (> (car best) (caar lst))
+          (ga-get-best-with-fit (cdr lst) best)
+          (ga-get-best-with-fit (cdr lst)  (car lst)))))
 
 ;(ga-run 32 100 10)
 ;;(ga-run Size-of-Chromosome Size-of-ga-population frequency-of-information)
