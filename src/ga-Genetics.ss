@@ -1,3 +1,7 @@
+;;(cd "/Users/tonyknapp/git/grid-predator-prey/src")
+;;(load "ga-Genetics.ss")
+;;(ga-run)
+
 (load "ga-neural-networks.ss")
 
 (define ga-population '()) ;; Holds the last generation
@@ -17,7 +21,7 @@
   (ga-evolve #t))
 
 ;; A function to print chromosomes to at the update frequency
-(trace-define (ga-store-DNA)
+(define (ga-store-DNA)
   (let* ((temp ga-fitness-array)
          (best (ga-get-best-with-fit ga-fitness-array (list 0 (list 0))))
          (best-fit (car best)))
@@ -57,15 +61,15 @@
 ;; Evolves the ga-population by one generation until desired outcome achieved
 (define (ga-evolve continue)
   (let* ((temp ga-fitness-array)
-               (best (car (ga-get-best temp 0 '())))
-               (fitness (ga-calculate-fitness best 0))
-               (total (ga-stochastic-calc ga-fitness-array 0))
-               (average-fit (quotient total ga-population-size)))
-  (if (eqv? (remainder ga-counter ga-updateFrequency) -1)
-      (begin
-        (display "On the ") (display ga-counter) (display " generation. ") (newline)
-        (display "  The best individual is: ") (display best) (display ". With a fitness of ") (display fitness) (newline)
-        (display "  The average fitness is ") (display average-fit) (display ".") (newline)))
+         (best (ga-get-best-with-fit ga-fitness-array (list 0 (list 0))))
+         (best-fit (car best))
+         (total (ga-stochastic-calc ga-fitness-array 0))
+         (average-fit (quotient total ga-population-size)))
+;;  (if (eqv? (remainder ga-counter ga-updateFrequency) -1)
+;;      (begin
+;;        (display "On the ") (display ga-counter) (display " generation. ") (newline)
+;;        (display "  The best individual is: ") (display best) (display ". With a fitness of ") (display fitness) (newline)
+;;        (display "  The average fitness is ") (display average-fit) (display ".") (newline)))
   (if continue
       (begin
         (ga-update-generation  ga-population)
@@ -76,12 +80,14 @@
 
 ;; Checks ga-population fitnesses to desired outcome fitness
 (define (ga-check-fitness lst)
-  (if (< ga-counter -1)
-      #f
+  (if (< ga-counter ga-stopper)
+;;      #f
+      #t
       (if (null? lst)
           #t
           (if (= (car (car lst)) ga-target-fitness)
-              #f
+;;              #f
+              #t
               (ga-check-fitness (cdr lst))))))
 
 ;; Recurses through two chromosomes; return true if a match, otherwise false
@@ -102,21 +108,59 @@
 
 ;; Calculates fitness of a chromosome
 (define (ga-calculate-fitness child fitness)
-  (load "grid-main.ss")
-  ;(set! gui #f)
   (nn-set-chromo-b! (car child))
   (nn-set-chromo-d! (cadr child))
   (nn-set-chromo-n! (caddr child))
   (nn-set-chromo-m! (cadddr child))
-  (- 501 (search grid 500)))
-;  (random 500))
+  (let* ((fit-one (begin
+                    (random-seed ga-counter)
+                    (load "grid-main.ss")
+;;                    (set! gui #f)
+                    (search grid 500)))
+         (fit-two (begin
+                    (random-seed (+ ga-counter 1))
+                    (load "grid-main.ss")
+                    (search grid 500)))
+         (fit-three (begin
+                      (random-seed (+ ga-counter 2))
+                      (load "grid-main.ss")
+                      (search grid 500)))
+         (fit-four (begin
+                     (random-seed (+ ga-counter 3))
+                     (load "grid-main.ss")
+                     (search grid 500)))
+         (fit-five (begin
+                     (random-seed (+ ga-counter 4))
+                     (load "grid-main.ss")
+                     (search grid 500)))
+         (fit-six (begin
+                    (random-seed (+ ga-counter 5))
+                    (load "grid-main.ss")
+                    (search grid 500)))
+         (fit-seven (begin
+                      (random-seed (+ ga-counter 6))
+                      (load "grid-main.ss")
+                      (search grid 500)))
+         (fit-eight (begin
+                      (random-seed (+ ga-counter 7))
+                      (load "grid-main.ss")
+                      (search grid 500)))
+         (fit-nine (begin
+                     (random-seed (+ ga-counter 8))
+                     (load "grid-main.ss")
+                     (search grid 500)))
+         (fit-ten (begin
+                    (random-seed (+ ga-counter 9))
+                    (load "grid-main.ss")
+                    (search grid 500))))
+    (- 5010 (+ fit-one fit-two fit-three fit-four fit-five fit-six fit-seven fit-eight fit-nine fit-ten))))
 
 ;; Breeds a new generation from the current ga-population
 (define (ga-update-generation  lst)
   (set! ga-counter (+ ga-counter 1))
   (set! ga-fitness-array '())
   (ga-population-fitness lst)
-  (if (eqv? (remainder ga-counter ga-updateFrequency) 0)
+  (if (eqv? (remainder ga-counter ga-updateFrequency) 1)
       (ga-store-DNA))
   (set! ga-population '())
   (set! ga-stochastic-array '())
@@ -202,7 +246,7 @@
           (ga-get-best (cdr lst) (car (car lst)) (cdr (car lst))))))
         
 ;; Finds the best chromosome, and returns it with its fitness
-(trace-define (ga-get-best-with-fit lst best)
+(define (ga-get-best-with-fit lst best)
   (if (null? lst)
       best
       (if (> (car best) (caar lst))

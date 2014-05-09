@@ -36,8 +36,8 @@
         (draw-robot))
        count)
       ((>= count stop-count)
-        ;(display "Took too long")
-        ;(newline)
+;;        (display "Took too long")
+;;        (newline)
         count)
       (else
         (pause pause-num)
