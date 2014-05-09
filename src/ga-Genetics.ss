@@ -8,12 +8,33 @@
 (define ga-stochastic-array '()) ;; Holds the last generation paired with 
 (define ga-target-fitness 501) ;; The best possible fitness
 (define ga-stopper 1000000000) ;; A limit on how many generations to use
+(define ga-last-best-fit 0) ;; Used for determining weather to save the current best or not
 
 ;; Called at program start, takes first generation and begins evolution
 (define (ga-run)
   (ga-first-gen 99 ga-population-size)
   (ga-update-generation  ga-population)
   (ga-evolve #t))
+
+;; A function to print chromosomes to at the update frequency
+(define (ga-store-DNA)
+  (let* ((temp ga-fitness-array)
+         (best (ga-get-best-with-fit lst best))
+         (best-fit (car best)))
+    (if (> best-ft ga-last-best-fit)
+        (let* ((jake (open-input-output-file "best-DNA.txt")))
+          (write best jake)
+          (close-port jake)
+          (set! ga-last-best-fit best-fit)))))
+        
+  ;; Will use a variable to remember the best fitness it has written to the file.
+  ;; If the best fitness now is better than that, will write current population to file
+  ;; Challenge will be to change population into string
+  ;; Example I/O stuff:
+;;(set! jake (open-input-output-file "text.txt")) Opens/Creates a file and returns a port to it
+;;(put-string-some jake "Hi Jake!") Lets you put Strings to the port
+;; (write (list 1 2 3) jake)  Lets you write any obj to the port
+;;(close-port jake) closes the port
 
 ;; Creates the first generation of chromosome strings
 (define (ga-first-gen chrom-len i)
@@ -95,11 +116,12 @@
   (set! ga-counter (+ ga-counter 1))
   (set! ga-fitness-array '())
   (ga-population-fitness lst)
+  (if (eqv? (remainder counter updateFrequency) 0)
+      (ga-store-population))
   (set! ga-population '())
-  (let ((temp ga-fitness-array))
-    (set! ga-stochastic-array '())
-    (let* ((total (ga-stochastic-calc temp 0)))
-      (ga-breed 0 total))))
+  (set! ga-stochastic-array '())
+  (let* ((total (ga-stochastic-calc ga-fitness-array 0)))
+    (ga-breed 0 total)))
 
 ;; Creates all children
 (define (ga-breed count total)
@@ -178,6 +200,14 @@
       (if (> int (car (car lst)))
           (ga-get-best (cdr lst) int best)
           (ga-get-best (cdr lst) (car (car lst)) (cdr (car lst))))))
+        
+;; Finds the best chromosome, and returns it with its fitness
+(define (ga-get-best-with-fit lst best)
+  (if (null? lst)
+      best
+      (if (> (car best) (car (car lst)))
+          (ga-get-best (cdr lst) best)
+          (ga-get-best (cdr lst)  (car lst)))))
 
 ;(ga-run 32 100 10)
 ;;(ga-run Size-of-Chromosome Size-of-ga-population frequency-of-information)
