@@ -77,7 +77,7 @@ The 4 states of the adjacent blocks. (Free: 0, Blocked: 10000, Off the map: 2000
 The Agent's X and Y coordinate, and the Openet's X and Y (Discrete between 0 and 29).
 
 
-### Division of Labor###
+### Division of Labor
 To me (TexasTony), it would make sense if we divided the labor amoung the following lines. One person works on the Neural Network, another on the Sensors and Outputs, another works on GA, and another on the Fitness function.
 
 ## Git Process
