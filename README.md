@@ -1,9 +1,9 @@
-#Predator/Prey in the Grid#
+# Predator/Prey in the Grid
 
-###Project Summary###
+### Project Summary
 Create a predator and a prey for the predator/prey competition on 05/08/14.
 
-###Project Guidelines###
+### Project Guidelines:
 You can only modify grid-get-next-robot.ss and grid-get-next-goal.ss. Rename them both with your
 name in front of grid.
 
@@ -24,7 +24,7 @@ controller.
 This is not intended to be a repeat of the mini-max assignment, although you may use mini-max up to
 3 plys. For the best grade, make use of other AI methods, such as NNs, CBR, or production systems.
 
-##Thursday, 2:00PM Analysis##
+##T hursday, 2:00PM Analysis:
 TexasTony believes that the GA is failing to evolve in the right direction for the following reasons. 
 
 1. The population size is too small.
@@ -37,14 +37,14 @@ PARKER: Figure out how to write to files every so often. Also, MAKE SURE THAT WE
 
 I should clarify. All of the above were meant to happen before we set this thing on full scale training. TexasTony failed to communicate that to his collaborators, because he focused to much on other problems.
 
-##Thursday, 5:00 AM Update##
+## Thursday, 5:00 AM Updat
 TexasTony is going to crash. KatieBurke11, TexasTony, Tatwater, and Ren1us met in the Robotics lab at 6:00PM. KatieBurke11 left at midnight. Tatwater left at 4:30AM. TexasTony is leaving at 5:10AM. Ren1us is still working. We are so increadbly close...
 
 "This is an impressive attempt at doing something somewhat intelligent." -- Famous last words.
 
-###Evolution Plan###
+### Evolution Plan
 
-####GA and NN Questions For Parker and Ansers####
+#### GA and NN Questions For Parker and Ansers
 Should we ease the agents into the training scheme?
 	PARKER: Yes
 
@@ -62,7 +62,7 @@ How many bits should the weights be?
 	
 After a long discussion, it was advised that we create 4 neural networks: a neural network that predicts the behavior (M, B, D, or do-nothing), and a neural network for each of the decsions (B, D, M). The networks can first be trained individually, and then together in parallel. 
 
-####Outputs####
+#### Outputs
 MN ME MS MW BN BE BS BE DN DE DS DW S
 
 The first letter stands for an action: M = Move, B = Build, D = Destroy, S = stay
@@ -71,29 +71,29 @@ The first letter stands for an action: M = Move, B = Build, D = Destroy, S = sta
 
 The above constraint may be the first real thing we "teach" our network. It could be as simple as setting the fitness of any Chromosome that breaks this constraint to 0. 0 D High is the choice to not do anything.
 
-####Inputs or Sensors####
+#### Inputs or Sensors
 The 4 states of the adjacent blocks. (Free: 0, Blocked: 10000, Off the map: 20000)
 
 The Agent's X and Y coordinate, and the Openet's X and Y (Discrete between 0 and 29).
 
 
-###Division of Labor###
+### Division of Labor###
 To me (TexasTony), it would make sense if we divided the labor amoung the following lines. One person works on the Neural Network, another on the Sensors and Outputs, another works on GA, and another on the Fitness function.
 
-##Git Process##
+## Git Process
 
-###To Start New Project###
+### To Start New Project
 Clone Project to your Eclipse Platform via going to the Git perspective, Clone a Repository
 
 In that view, Click the Repository, and select import project, import as general project.
 
 Click the Repository, go to switch to, New Branch, and create a new branch. As your source, select Remote Tracking: GitHub/master. Now, if anyone updates that branch, you can pull those updates.
 
-###When Opening Eclipse###
+### When Opening Eclipse
 Go to the main branch, and hit Pull.
 
 Merge any changes that have happened mannually by editing the code, and then clicking on the files that were conflicted, and then Add. Once all files have been merged manually, click commit. Do this Often and things won't be crazy when you commit and push later.
 
-###If you would like us to see your work###
+### If you would like us to see your work
 Push the branch to git by hitting Push. Make sure Pull first, or have a reason not to.
 
