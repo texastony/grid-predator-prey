@@ -24,7 +24,7 @@ controller.
 This is not intended to be a repeat of the mini-max assignment, although you may use mini-max up to
 3 plys. For the best grade, make use of other AI methods, such as NNs, CBR, or production systems.
 
-##T hursday, 2:00PM Analysis:
+## Thursday, 2:00PM Analysis:
 TexasTony believes that the GA is failing to evolve in the right direction for the following reasons. 
 
 1. The population size is too small.
